@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   VISORA — Design tokens
+   Mirror of `src/lib/constants.ts`. Edit both in lockstep.
+   ───────────────────────────────────────────────────────────── */
+@theme inline {
+  /* Surfaces */
+  --color-background: #020617;
+  --color-card: #0F172A;
+  --color-card-hover: #1E293B;
+  --color-card-deep: #0a0f1e;
+
+  /* Text */
+  --color-foreground: #F8FAFC;
+  --color-muted: #94A3B8;
+  --color-hint: #64748B;
+
+  /* Brand accents */
+  --color-brand-cyan: #38BDF8;
+  --color-brand-purple: #A855F7;
+
+  /* Semantic state */
+  --color-state-success: #22C55E;
+  --color-state-warning: #F59E0B;
+  --color-state-danger: #EF4444;
+
+  /* Type */
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+
+  /* Animations
+     Tailwind v4 replaces tailwind.config.ts: declare `--animate-*` tokens
+     here and `@keyframes` are picked up automatically. */
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
+  --animate-float-slow: float-slow 6s ease-in-out infinite;
+  --animate-visora-cube-spin: visora-cube-spin 14s linear infinite;
+
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes visora-cube-spin {
+    from {
+      transform: rotateX(20deg) rotateY(0deg);
+    }
+    to {
+      transform: rotateX(20deg) rotateY(360deg);
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────── */
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Slim, brand-tinted scrollbar (WebKit) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-card-hover);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-cyan);
+}
+
+/* Selection */
+::selection {
+  background: color-mix(in srgb, var(--color-brand-cyan) 35%, transparent);
+  color: var(--color-foreground);
+}
