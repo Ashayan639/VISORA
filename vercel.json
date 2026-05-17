@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "npm ci --prefix visora || npm install --prefix visora",
+  "buildCommand": "npm run build --prefix visora && node scripts/prepare-vercel-output.mjs"
+}
