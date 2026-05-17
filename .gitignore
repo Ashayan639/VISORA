@@ -80,6 +80,10 @@ web_modules/
 .next
 out
 
+# Copied to repo root by scripts/prepare-vercel-output.mjs (app lives in visora/)
+/next.config.ts
+/public/
+
 # Nuxt.js build / generate output
 .nuxt
 dist
