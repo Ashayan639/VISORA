@@ -1,39 +1,27 @@
 /**
- * VISORA — Design tokens
+ * VISORA — Design tokens (monochrome)
  *
- * Single source of truth for brand colors. Mirror these values in
- * `tailwind.config` / CSS variables so JS and CSS stay in sync.
+ * Single source of truth for UI colors. Mirror these values in
+ * `globals.css` / `@theme` so JS and CSS stay in sync.
  */
 
 export const colors = {
-  background: "#020617",
-  card: "#0F172A",
-  cardHover: "#1E293B",
-  /** Deeper surface used by the footer. */
-  cardDeep: "#0a0f1e",
-  text: "#F8FAFC",
-  muted: "#94A3B8",
-  hint: "#64748B",
-  cyan: "#38BDF8",
-  purple: "#A855F7",
-  green: "#22C55E",
-  amber: "#F59E0B",
-  red: "#EF4444",
+  background: "#0D0E10",
+  card: "#282728",
+  cardHover: "#1A1A1B",
+  cardElevated: "#333334",
+  cardDeep: "#0D0E10",
+  text: "#F8FAFA",
+  muted: "#C5C6C8",
+  hint: "#818283",
+  disabled: "#4F5052",
+  border: "#4F5052",
+  borderHover: "#818283",
+  borderActive: "#C5C6C8",
 } as const;
 
 export type ColorToken = keyof typeof colors;
 export type ColorValue = (typeof colors)[ColorToken];
-
-/** Semantic aliases used by status / score widgets. */
-export const semanticColors = {
-  success: colors.green,
-  warning: colors.amber,
-  danger: colors.red,
-  info: colors.cyan,
-  accent: colors.purple,
-} as const;
-
-export type SemanticColor = keyof typeof semanticColors;
 
 /** App metadata. */
 export const APP = {

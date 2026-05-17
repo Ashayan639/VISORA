@@ -90,7 +90,7 @@ function makeProject(over: Partial<Project> = {}): Project {
       usp: "",
       story: "",
       promise: "",
-      colorPalette: ["#020617", "#38BDF8"],
+      colorPalette: ["#0D0E10", "#F8FAFA"],
       painPoints: [],
       ...over.brandResult,
     },

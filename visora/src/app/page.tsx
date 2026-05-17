@@ -12,9 +12,12 @@ import { WhyFalSection } from "@/components/landing/WhyFalSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { CTASection } from "@/components/landing/CTASection";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 const SPLINE_SCENE =
   "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
+
+const PARTNER_LOGOS = ["fal.ai", "OpenAI", "Supabase", "Next.js", "Vercel"];
 
 /* ─────────────────────────────────────────────────────────────
    Bits
@@ -23,22 +26,22 @@ const SPLINE_SCENE =
 function FloatingOrbs() {
   return (
     <>
-      <div
+      <motion.div
         aria-hidden
         className="
           pointer-events-none absolute -top-20 -right-20
           h-[600px] w-[600px] rounded-full
-          bg-brand-cyan opacity-[0.04] blur-3xl
+          bg-white opacity-[0.02] blur-3xl
           animate-float-slow
         "
       />
-      <div
+      <motion.div
         aria-hidden
         style={{ animationDelay: "2s" }}
         className="
           pointer-events-none absolute -bottom-20 -left-20
           h-[400px] w-[400px] rounded-full
-          bg-brand-purple opacity-[0.03] blur-3xl
+          bg-white opacity-[0.02] blur-3xl
           animate-float-slow
         "
       />
@@ -46,50 +49,26 @@ function FloatingOrbs() {
   );
 }
 
-function MobileSplinePlaceholder() {
+function PartnerLogosRow() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-sm">
-      <div
-        className="
-          absolute inset-0 rounded-3xl
-          bg-gradient-to-br from-brand-cyan/20 to-brand-purple/20
-          backdrop-blur-xl border border-white/[0.06]
-        "
-      />
-      <motion.div
-        animate={{ y: [0, -12, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="
-          absolute top-8 left-8 h-16 w-16 rounded-2xl
-          bg-brand-cyan/40 blur-xl
-        "
-      />
-      <motion.div
-        animate={{ y: [0, -16, 0] }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          delay: 0.6,
-          ease: "easeInOut",
-        }}
-        className="
-          absolute bottom-8 right-8 h-20 w-20 rounded-2xl
-          bg-brand-purple/40 blur-xl
-        "
-      />
-      <div className="absolute inset-0 flex items-center justify-center">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, delay: 1, ease: "easeOut" }}
+      className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-6"
+    >
+      <span className="text-xs font-medium uppercase tracking-[0.14em] text-[#4F5052]">
+        Powered by
+      </span>
+      {PARTNER_LOGOS.map((name) => (
         <span
-          className="
-            text-7xl font-bold tracking-tight
-            bg-clip-text text-transparent
-            bg-gradient-to-br from-brand-cyan to-brand-purple
-            drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]
-          "
+          key={name}
+          className="text-xs font-medium uppercase tracking-[0.14em] text-[#4F5052]"
         >
-          V
+          {name}
         </span>
-      </div>
-    </div>
+      ))}
+    </motion.div>
   );
 }
 
@@ -99,15 +78,32 @@ function MobileSplinePlaceholder() {
 
 export default function HomePage() {
   return (
-    <>
+    <motion.div
+      className="overflow-x-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+    >
       <Hero />
-      <ProblemSection />
-      <SolutionSection />
-      <WhyFalSection />
-      <HowItWorksSection />
-      <FeaturesSection />
-      <CTASection />
-    </>
+      <RevealOnScroll>
+        <ProblemSection />
+      </RevealOnScroll>
+      <RevealOnScroll>
+        <SolutionSection />
+      </RevealOnScroll>
+      <RevealOnScroll>
+        <WhyFalSection />
+      </RevealOnScroll>
+      <RevealOnScroll>
+        <HowItWorksSection />
+      </RevealOnScroll>
+      <RevealOnScroll>
+        <FeaturesSection />
+      </RevealOnScroll>
+      <RevealOnScroll>
+        <CTASection />
+      </RevealOnScroll>
+    </motion.div>
   );
 }
 
@@ -118,7 +114,7 @@ function Hero() {
         className="
           relative w-full overflow-hidden rounded-none
           min-h-[calc(100vh-4rem)]
-          bg-black/[0.96] border-0
+          bg-background border-0
         "
       >
         <Spotlight
@@ -127,19 +123,34 @@ function Hero() {
         />
         <FloatingOrbs />
 
-        <div
-          className="
-            relative z-10 mx-auto flex w-full max-w-7xl
-            flex-col-reverse md:flex-row
-            items-center
-            min-h-[calc(100vh-4rem)]
-            gap-12 md:gap-8
-            px-6 md:px-12
-            py-16 md:py-12
-          "
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+          className="pointer-events-none hidden md:block absolute inset-y-0 right-0 z-0 w-[48%] lg:w-[52%] xl:w-[55%]"
+          aria-hidden
         >
-          {/* ── Left: copy ─────────────────────────────────── */}
-          <div className="flex flex-1 flex-col justify-center gap-6">
+          <div className="relative h-full min-h-[calc(100vh-4rem)] w-full">
+            <SplineScene
+              scene={SPLINE_SCENE}
+              className="h-full w-full min-h-full"
+              followCursor
+            />
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="
+            relative z-10 mx-auto w-full max-w-7xl
+            min-h-[calc(100vh-4rem)]
+            px-6 md:px-12
+            py-16 md:py-0
+          "
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <motion.div className="relative z-10 flex w-full flex-col justify-center gap-6 md:max-w-[52%] lg:max-w-[48%] min-h-[calc(100vh-4rem)] md:py-12">
             {/* Badge */}
             <motion.div
               initial={{ x: -20, opacity: 0 }}
@@ -148,11 +159,11 @@ function Hero() {
               className="
                 inline-flex items-center gap-2 self-start
                 rounded-full px-3 py-1
-                bg-brand-cyan/10 border border-brand-cyan/30
-                text-[12px] font-medium text-brand-cyan
+                bg-white/[0.04] border border-[#4F5052]/30
+                text-[12px] font-medium text-muted
               "
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-cyan animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-foreground animate-pulse" />
               Powered by fal.ai
             </motion.div>
 
@@ -164,7 +175,7 @@ function Hero() {
               className="
                 text-6xl sm:text-7xl font-bold tracking-tight leading-[0.95]
                 bg-clip-text text-transparent
-                bg-gradient-to-b from-neutral-50 to-neutral-400
+                bg-gradient-to-b from-[#F8FAFA] to-[#818283]
               "
             >
               VISORA
@@ -175,11 +186,7 @@ function Hero() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5, ease: "easeOut" }}
-              className="
-                text-2xl sm:text-3xl font-semibold tracking-tight leading-tight
-                bg-clip-text text-transparent
-                bg-gradient-to-b from-neutral-50 to-neutral-400
-              "
+              className="text-2xl sm:text-3xl font-semibold tracking-tight leading-tight text-muted"
             >
               Visual Business Reality Engine
             </motion.h2>
@@ -189,7 +196,7 @@ function Hero() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
-              className="max-w-lg text-base leading-relaxed text-[#94A3B8]"
+              className="max-w-lg text-base leading-relaxed text-hint"
             >
               Turn startup ideas and existing websites into market-ready brand
               visuals, 3D product models, trust scores, and launch-ready
@@ -207,23 +214,23 @@ function Hero() {
                 href="/generate"
                 className="
                   group relative inline-flex items-center justify-center
-                  rounded-full px-6 py-3 text-sm font-semibold text-white
-                  bg-gradient-to-r from-brand-cyan to-brand-purple
-                  shadow-lg shadow-brand-cyan/20
+                  rounded-full px-6 py-3 text-sm font-semibold
+                  bg-foreground text-background
+                  shadow-lg shadow-black/25
                   transition-all duration-200
-                  hover:scale-105 hover:shadow-xl hover:shadow-brand-purple/40
+                  hover:scale-105 hover:bg-muted hover:shadow-[0_0_40px_rgba(248,250,250,0.04)]
                 "
               >
                 Start Building Reality
               </Link>
               <Link
-                href="/demo"
+                href="/generate"
                 className="
                   inline-flex items-center justify-center
                   rounded-full px-6 py-3 text-sm font-semibold
-                  border border-brand-cyan/40 text-muted
+                  border border-[#4F5052]/30 text-muted
                   transition-colors duration-200
-                  hover:bg-brand-cyan/5 hover:text-foreground hover:border-brand-cyan
+                  hover:bg-white/[0.04] hover:text-foreground hover:border-[#818283]/50
                 "
               >
                 Watch Demo
@@ -235,40 +242,33 @@ function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
-              className="pt-4 text-sm text-[#64748B]"
+              className="pt-4 text-sm text-hint"
             >
               4 fal.ai Visuals
-              <span className="mx-2 text-hint/50">·</span>
+              <span className="mx-2 text-[#4F5052]">·</span>
               3D Models
-              <span className="mx-2 text-hint/50">·</span>
+              <span className="mx-2 text-[#4F5052]">·</span>
               AI Trust Score
             </motion.p>
-          </div>
 
-          {/* ── Right: Spline / mobile placeholder ─────────── */}
-          <div className="relative flex flex-1 items-center justify-center w-full">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="
-                hidden md:block
-                relative aspect-square w-full max-w-[450px] max-h-[450px]
-              "
-            >
-              <SplineScene scene={SPLINE_SCENE} className="h-full w-full" />
-            </motion.div>
+            <PartnerLogosRow />
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-              className="md:hidden w-full"
-            >
-              <MobileSplinePlaceholder />
-            </motion.div>
-          </div>
-        </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+            className="relative z-10 mt-10 w-full md:hidden"
+          >
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-md min-h-[340px]">
+              <SplineScene
+                scene={SPLINE_SCENE}
+                className="h-full w-full"
+                followCursor
+              />
+            </div>
+          </motion.div>
+        </motion.div>
       </Card>
     </section>
   );

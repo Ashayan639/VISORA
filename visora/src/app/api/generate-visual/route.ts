@@ -22,8 +22,10 @@ import { NextResponse } from "next/server";
 
 import {
   generateOneVisual,
+  placeholderUrlForVisual,
   type GenerateVisualInput,
 } from "@/lib/fal-generation";
+import { sanitizeErrorMessage } from "@/lib/sanitizeError";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -125,11 +127,14 @@ export async function POST(req: Request): Promise<NextResponse> {
     return withCors(
       NextResponse.json(
         {
-          imageUrl: "/placeholder-visual.png",
+          imageUrl: placeholderUrlForVisual(
+            parsed.input.visualType,
+            parsed.input.title,
+          ),
           visualType: parsed.input.visualType,
           prompt: parsed.input.prompt,
           status: "fallback",
-          error: message,
+          error: sanitizeErrorMessage(message),
           durationMs: 0,
         },
         { status: 200 },

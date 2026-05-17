@@ -47,8 +47,8 @@ export function SectionHeading({
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="
             inline-flex items-center rounded-full px-3 py-1
-            bg-brand-cyan/10 border border-brand-cyan/30
-            text-[12px] font-medium text-brand-cyan
+            bg-white/[0.04] border border-[#4F5052]/30
+            text-[12px] font-medium text-muted
           "
         >
           {eyebrow}

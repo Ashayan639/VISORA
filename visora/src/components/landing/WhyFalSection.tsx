@@ -64,36 +64,29 @@ function VisualTile({
       whileInView={{ y: 0, opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5, delay, ease: "easeOut" }}
+      whileHover={{ y: -2 }}
       className={cn(
         "group relative overflow-hidden rounded-2xl p-6",
-        "bg-white/[0.03] backdrop-blur-xl",
-        "border border-white/[0.06]",
-        "transition-[border-color,box-shadow] duration-300",
-        "hover:border-brand-cyan/25 hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.35)]",
-        emphasis && "border-brand-cyan/30",
+        "bg-card border border-[#4F5052]/30",
+        "transition-[border-color,box-shadow,background-color] duration-300",
+        "hover:bg-card-hover hover:border-[#818283]/50",
+        "hover:shadow-[0_0_40px_-12px_rgba(255,255,255,0.06)]",
+        emphasis && "border-[#818283]/40",
       )}
     >
-      {/* Continuous subtle glow pulse (animates opacity, not box-shadow,
-          so it remains GPU-cheap). */}
       <motion.span
         aria-hidden
-        animate={emphasis ? { opacity: [0.35, 0.7, 0.35] } : { opacity: [0.2, 0.4, 0.2] }}
+        animate={emphasis ? { opacity: [0.2, 0.45, 0.2] } : { opacity: [0.1, 0.25, 0.1] }}
         transition={{ duration: emphasis ? 2.4 : 3.4, repeat: Infinity, ease: "easeInOut" }}
-        className={cn(
-          "pointer-events-none absolute -inset-px rounded-2xl blur-2xl",
-          emphasis
-            ? "bg-gradient-to-br from-brand-cyan/20 via-transparent to-brand-purple/20"
-            : "bg-gradient-to-br from-brand-cyan/10 via-transparent to-brand-purple/10",
-        )}
+        className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-white/10 via-transparent to-white/[0.02] blur-2xl"
       />
 
       <div className="relative">
         <div
           className={cn(
             "mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl ring-1",
-            emphasis
-              ? "bg-brand-cyan/15 text-brand-cyan ring-brand-cyan/40"
-              : "bg-brand-cyan/10 text-brand-cyan ring-brand-cyan/20",
+            "bg-white/[0.04] text-foreground ring-[#4F5052]/30",
+            emphasis && "ring-[#818283]/40",
           )}
         >
           <Icon size={22} strokeWidth={1.75} />
@@ -101,7 +94,7 @@ function VisualTile({
         <h3 className="text-base font-semibold text-foreground">{title}</h3>
         <p className="mt-1.5 text-sm leading-relaxed text-muted">{description}</p>
         {emphasis ? (
-          <span className="absolute right-0 top-0 inline-flex items-center rounded-full bg-brand-purple/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-purple ring-1 ring-brand-purple/30">
+          <span className="absolute right-0 top-0 inline-flex items-center rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground ring-1 ring-[#4F5052]/30">
             3D
           </span>
         ) : null}
@@ -113,10 +106,15 @@ function VisualTile({
 export function WhyFalSection() {
   return (
     <section className="relative w-full py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
+      <motion.div
+        className="mx-auto max-w-7xl px-6 md:px-12"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <SectionHeading title="fal.ai Powers the Visual Reality" />
 
-        {/* "Best Use of fal" gradient badge */}
         <motion.div
           initial={{ y: 12, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -127,14 +125,11 @@ export function WhyFalSection() {
           <span
             className="
               relative inline-flex items-center rounded-full
-              p-[1px] bg-gradient-to-r from-brand-cyan to-brand-purple
+              border border-[#4F5052]/30 bg-card px-4 py-1.5
+              text-xs font-semibold tracking-wide text-foreground
             "
           >
-            <span className="rounded-full bg-background px-4 py-1.5 text-xs font-semibold tracking-wide">
-              <span className="bg-gradient-to-r from-brand-cyan to-brand-purple bg-clip-text text-transparent">
-                BUILT FOR BEST USE OF FAL
-              </span>
-            </span>
+            BUILT FOR BEST USE OF FAL
           </span>
         </motion.div>
 
@@ -152,15 +147,13 @@ export function WhyFalSection() {
           className="mx-auto mt-16 max-w-3xl text-center text-base sm:text-lg leading-relaxed text-muted"
         >
           <span className="text-foreground">OpenAI</span> creates the brain.
-          <span className="mx-2 text-hint/60">·</span>
+          <span className="mx-2 text-[#4F5052]">·</span>
           <span className="text-foreground">Supabase</span> saves the memory.
-          <span className="mx-2 text-hint/60">·</span>
-          <span className="bg-gradient-to-r from-brand-cyan to-brand-purple bg-clip-text font-semibold text-transparent">
-            fal.ai
-          </span>{" "}
+          <span className="mx-2 text-[#4F5052]">·</span>
+          <span className="font-semibold text-foreground">fal.ai</span>{" "}
           creates the visual reality.
         </motion.p>
-      </div>
+      </motion.div>
     </section>
   );
 }

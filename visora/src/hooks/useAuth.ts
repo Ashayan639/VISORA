@@ -1,64 +1,41 @@
 "use client";
 
+import { useContext } from "react";
+
 import {
-  signIn,
-  signOut,
-  useSession,
-  type SignInOptions,
-  type SignOutParams,
-} from "next-auth/react";
-import type { Session } from "next-auth";
-import { useCallback } from "react";
+  AuthContext,
+  type AuthContextValue,
+} from "@/components/providers/AuthProvider";
+import { mapAuthUser } from "@/lib/auth";
 
 export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
-export interface UseAuthResult {
-  session: Session | null;
-  user: Session["user"] | null;
+export interface UseAuthResult extends AuthContextValue {
+  /** UI-friendly user for avatars / display names */
+  profile: ReturnType<typeof mapAuthUser>;
   status: AuthStatus;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  /** Trigger NextAuth sign-in. Defaults to the `google` provider. */
-  signIn: (
-    provider?: string,
-    options?: SignInOptions,
-  ) => ReturnType<typeof signIn>;
-  /** Trigger NextAuth sign-out. */
-  signOut: (options?: SignOutParams) => ReturnType<typeof signOut>;
 }
 
 /**
- * VISORA — Auth convenience hook.
- *
- * Thin wrapper over `useSession()` that exposes everything most components
- * need (session, status booleans, sign-in, sign-out) in one shot.
- *
- * Safe to call even when no providers are configured: `status` will simply
- * stay `"unauthenticated"` forever, and `signIn()` will redirect to the
- * NextAuth error page instead of crashing the app.
+ * VISORA — Auth hook (Supabase).
+ * Must be used inside `AuthProvider`.
  */
 export function useAuth(): UseAuthResult {
-  const { data: session, status } = useSession();
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
 
-  const handleSignIn = useCallback(
-    (provider: string = "google", options?: SignInOptions) =>
-      signIn(provider, options),
-    [],
-  );
-
-  const handleSignOut = useCallback(
-    (options?: SignOutParams) => signOut(options),
-    [],
-  );
+  const status: AuthStatus = ctx.loading
+    ? "loading"
+    : ctx.isLoggedIn
+      ? "authenticated"
+      : "unauthenticated";
 
   return {
-    session: session ?? null,
-    user: session?.user ?? null,
+    ...ctx,
+    profile: mapAuthUser(ctx.user),
     status,
-    isAuthenticated: status === "authenticated",
-    isLoading: status === "loading",
-    signIn: handleSignIn,
-    signOut: handleSignOut,
   };
 }
 

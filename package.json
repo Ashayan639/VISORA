@@ -1,0 +1,12 @@
+{
+  "name": "visora-workspace",
+  "private": true,
+  "description": "VISORA monorepo root — npm scripts delegate to the Next.js app in visora/",
+  "scripts": {
+    "dev": "npm run dev --prefix visora",
+    "build": "npm run build --prefix visora",
+    "start": "npm run start --prefix visora",
+    "lint": "npm run lint --prefix visora",
+    "test:smoke": "npm run test:smoke --prefix visora"
+  }
+}

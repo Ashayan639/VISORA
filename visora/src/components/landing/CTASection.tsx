@@ -5,33 +5,35 @@ import { motion } from "framer-motion";
 import { ArrowRight, Rocket } from "lucide-react";
 
 /**
- * Final landing CTA — a gradient-bordered card with a subtle animated
- * mesh background. The mesh is two slow-drifting radial gradients
- * orchestrated with Framer's `animate` prop (cheap; no JS scroll handlers).
+ * Final landing CTA — a monochrome-bordered card with a subtle animated
+ * mesh background. The mesh is slow-drifting radial gradients (white/silver only).
  */
 export function CTASection() {
   return (
     <section className="relative w-full pb-32 pt-16 sm:pb-40 sm:pt-24">
-      <div className="mx-auto max-w-5xl px-6 md:px-12">
+      <motion.div
+        className="mx-auto max-w-5xl px-6 md:px-12"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+      >
         <motion.div
-          initial={{ y: 24, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
           className="
             relative overflow-hidden rounded-3xl
-            p-[1px] bg-gradient-to-br from-brand-cyan via-brand-purple to-brand-cyan
-            shadow-[0_30px_80px_-30px_rgba(56,189,248,0.45)]
+            border border-[#4F5052]/30
+            shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]
           "
+          whileHover={{ borderColor: "rgba(129, 130, 131, 0.5)" }}
+          transition={{ duration: 0.3 }}
         >
           <div
             className="
-              relative overflow-hidden rounded-[calc(1.5rem-1px)]
+              relative overflow-hidden rounded-3xl
               bg-background
               px-6 py-16 sm:px-16 sm:py-20
             "
           >
-            {/* Animated gradient mesh */}
             <motion.div
               aria-hidden
               animate={{
@@ -44,18 +46,17 @@ export function CTASection() {
               }}
               style={{
                 backgroundImage:
-                  "radial-gradient(40% 50% at 20% 30%, rgba(56,189,248,0.18) 0%, transparent 60%), radial-gradient(35% 45% at 80% 70%, rgba(168,85,247,0.18) 0%, transparent 60%), radial-gradient(30% 40% at 50% 100%, rgba(56,189,248,0.10) 0%, transparent 60%)",
+                  "radial-gradient(40% 50% at 20% 30%, rgba(255,255,255,0.06) 0%, transparent 60%), radial-gradient(35% 45% at 80% 70%, rgba(129,130,131,0.08) 0%, transparent 60%), radial-gradient(30% 40% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 60%)",
                 backgroundSize: "200% 200%",
               }}
               className="pointer-events-none absolute inset-0"
             />
 
-            {/* Soft top vignette */}
             <div
               aria-hidden
               className="
                 pointer-events-none absolute inset-x-0 top-0 h-40
-                bg-gradient-to-b from-brand-cyan/5 to-transparent
+                bg-gradient-to-b from-white/[0.03] to-transparent
               "
             />
 
@@ -67,8 +68,8 @@ export function CTASection() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="
                   inline-flex items-center gap-2 rounded-full px-3 py-1
-                  bg-brand-cyan/10 border border-brand-cyan/30
-                  text-[12px] font-medium text-brand-cyan
+                  bg-white/[0.04] border border-[#4F5052]/30
+                  text-[12px] font-medium text-muted
                 "
               >
                 <Rocket size={12} strokeWidth={2} />
@@ -110,11 +111,10 @@ export function CTASection() {
                 <Link
                   href="/generate"
                   className="
-                    group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white
-                    bg-gradient-to-r from-brand-cyan to-brand-purple
-                    shadow-lg shadow-brand-cyan/25
+                    group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold
+                    bg-foreground text-background shadow-lg shadow-black/25
                     transition-all duration-200
-                    hover:scale-105 hover:shadow-xl hover:shadow-brand-purple/40
+                    hover:scale-105 hover:bg-foreground/90 hover:shadow-xl hover:shadow-black/40
                   "
                 >
                   Start Building — It&apos;s Free
@@ -128,7 +128,7 @@ export function CTASection() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

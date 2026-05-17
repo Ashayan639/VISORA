@@ -46,18 +46,16 @@ const STEPS: Step[] = [
   },
 ];
 
-/**
- * Horizontal 5-step timeline on md+, vertical on mobile.
- *
- * The connecting gradient line uses `scaleX` from a single `motion.div`
- * with a left transform-origin so it appears to "draw" left-to-right on
- * scroll. Steps stagger in via the parent variant so each one pops as the
- * line approximately reaches it.
- */
 export function HowItWorksSection() {
   return (
     <section className="relative w-full py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
+      <motion.div
+        className="mx-auto max-w-7xl px-6 md:px-12"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <SectionHeading title="How It Works" subtitle="Five steps from blank slate to launch-ready." />
 
         <motion.div
@@ -73,8 +71,14 @@ export function HowItWorksSection() {
           className="relative mt-20"
         >
           {/* Desktop: horizontal gradient line + tick marks */}
-          <div className="hidden md:block">
-            <div className="relative h-px w-full bg-white/[0.06]">
+          <motion.div
+            className="hidden md:block"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            <motion.div className="relative h-px w-full bg-[#4F5052]/30">
               <motion.div
                 variants={{
                   hidden: { scaleX: 0 },
@@ -84,11 +88,10 @@ export function HowItWorksSection() {
                 style={{ transformOrigin: "left" }}
                 className="
                   absolute inset-0 h-px
-                  bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-cyan
-                  shadow-[0_0_18px_-2px_rgba(56,189,248,0.6)]
+                  bg-gradient-to-r from-[#4F5052] via-[#818283] to-[#4F5052]
                 "
               />
-            </div>
+            </motion.div>
 
             <ol className="relative -mt-6 grid grid-cols-5 gap-4">
               {STEPS.map(({ icon: Icon, title, description }, i) => (
@@ -101,19 +104,20 @@ export function HowItWorksSection() {
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   className="flex flex-col items-center text-center"
                 >
-                  <div
+                  <motion.div
                     className="
                       relative flex h-12 w-12 items-center justify-center rounded-full
-                      bg-background ring-1 ring-white/10
-                      text-brand-cyan
+                      bg-background ring-1 ring-[#4F5052]/30 text-foreground
                     "
+                    whileHover={{ scale: 1.06 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   >
                     <Icon size={20} strokeWidth={1.75} />
                     <span
                       aria-hidden
-                      className="absolute -inset-1 rounded-full bg-brand-cyan/10 blur-md"
+                      className="absolute -inset-1 rounded-full bg-white/[0.04] blur-md"
                     />
-                  </div>
+                  </motion.div>
                   <span className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-hint">
                     Step {i + 1}
                   </span>
@@ -126,11 +130,11 @@ export function HowItWorksSection() {
                 </motion.li>
               ))}
             </ol>
-          </div>
+          </motion.div>
 
           {/* Mobile: vertical timeline */}
           <ol className="relative md:hidden">
-            <div className="absolute left-6 top-0 h-full w-px bg-white/[0.06]" />
+            <div className="absolute left-6 top-0 h-full w-px bg-[#4F5052]/30" />
             <motion.div
               variants={{
                 hidden: { scaleY: 0 },
@@ -140,7 +144,7 @@ export function HowItWorksSection() {
               style={{ transformOrigin: "top" }}
               className="
                 absolute left-6 top-0 h-full w-px
-                bg-gradient-to-b from-brand-cyan via-brand-purple to-brand-cyan
+                bg-gradient-to-b from-[#4F5052] via-[#818283] to-[#4F5052]
               "
             />
 
@@ -154,14 +158,15 @@ export function HowItWorksSection() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative flex gap-5 pb-10 pl-0"
               >
-                <div
+                <motion.div
                   className="
                     relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full
-                    bg-background ring-1 ring-white/10 text-brand-cyan
+                    bg-background ring-1 ring-[#4F5052]/30 text-foreground
                   "
+                  whileHover={{ scale: 1.05 }}
                 >
                   <Icon size={20} strokeWidth={1.75} />
-                </div>
+                </motion.div>
                 <div className="pt-1.5">
                   <span className="text-xs font-semibold uppercase tracking-[0.16em] text-hint">
                     Step {i + 1}
@@ -177,7 +182,7 @@ export function HowItWorksSection() {
             ))}
           </ol>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

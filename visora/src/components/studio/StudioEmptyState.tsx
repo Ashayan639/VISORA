@@ -71,16 +71,16 @@ export function StudioEmptyState({
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="
             relative flex h-20 w-20 items-center justify-center rounded-2xl
-            bg-gradient-to-br from-brand-cyan to-brand-purple
-            shadow-[0_20px_60px_-15px_rgba(56,189,248,0.5)]
+            bg-foreground text-background
+            shadow-[0_20px_60px_-15px_rgba(255,255,255,0.5)]
           "
         >
-          <Box size={32} strokeWidth={1.75} className="text-white" />
+          <Box size={32} strokeWidth={1.75} className="text-background" />
           <span
             aria-hidden
             className="
-              pointer-events-none absolute -inset-2 rounded-3xl blur-2xl opacity-50
-              bg-gradient-to-br from-brand-cyan to-brand-purple
+              pointer-events-none absolute -inset-2 rounded-3xl blur-2xl opacity-40
+              bg-foreground/20
             "
           />
         </motion.div>
@@ -133,15 +133,15 @@ export function StudioEmptyState({
               className={cn(
                 "group relative flex w-full items-start gap-3 rounded-2xl p-4 text-left",
                 "bg-white/[0.03] backdrop-blur-xl",
-                "border border-white/[0.06]",
+                "border border-[#4F5052]/30",
                 "transition-[border-color,box-shadow] duration-200",
-                "hover:border-brand-cyan/25 hover:shadow-[0_0_30px_-12px_rgba(56,189,248,0.5)]",
+                "hover:border-[#4F5052]/30 hover:shadow-[0_0_30px_-12px_rgba(255,255,255,0.5)]",
               )}
             >
               <span
                 className="
                   inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
-                  bg-brand-cyan/10 text-brand-cyan ring-1 ring-brand-cyan/20
+                  bg-white/[0.04] text-foreground ring-1 ring-[#4F5052]/30
                 "
               >
                 <Icon size={18} strokeWidth={1.75} />

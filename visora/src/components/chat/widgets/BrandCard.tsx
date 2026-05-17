@@ -9,6 +9,8 @@ interface BrandCardProps {
   data: BrandResult;
   /** Click handler for "View Full Brand Board" — opens the right panel. */
   onOpen?: () => void;
+  /** Sends a chat message to refine the brand identity. */
+  onEdit?: () => void;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -33,23 +35,17 @@ function Attr({ label, value }: { label: string; value: string }) {
    BrandCard widget
    ───────────────────────────────────────────────────────────── */
 
-export function BrandCard({ data, onOpen }: BrandCardProps) {
+export function BrandCard({ data, onOpen, onEdit }: BrandCardProps) {
   return (
     <motion.div
       initial={{ y: 16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="
-        relative overflow-hidden rounded-2xl p-5
-        bg-white/[0.03] backdrop-blur-xl
-        border border-white/[0.06]
-        transition-colors duration-200
-        hover:border-brand-cyan/20
-      "
+      className="visora-card visora-card-interactive relative overflow-hidden p-5"
     >
       {/* Eyebrow */}
-      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-cyan" />
+      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-hint">
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-hint" />
         Brand Brain
       </div>
 
@@ -88,7 +84,7 @@ export function BrandCard({ data, onOpen }: BrandCardProps) {
                 }}
                 className="
                   group flex items-center gap-1.5 rounded-full
-                  border border-white/[0.06] bg-white/[0.02] px-2 py-1
+                  border border-[#4F5052]/30 bg-white/[0.02] px-2 py-1
                 "
                 title={hex}
               >
@@ -103,26 +99,48 @@ export function BrandCard({ data, onOpen }: BrandCardProps) {
         </div>
       ) : null}
 
-      {/* CTA */}
-      {onOpen ? (
-        <button
-          type="button"
-          onClick={onOpen}
-          className="
-            group/btn mt-6 inline-flex items-center gap-2 rounded-full
-            px-4 py-2 text-[13px] font-semibold text-white
-            bg-gradient-to-r from-brand-cyan to-brand-purple
-            shadow-md shadow-brand-cyan/20
-            transition-all duration-200
-            hover:scale-[1.03] hover:shadow-lg hover:shadow-brand-purple/30
-          "
+      {/* CTAs */}
+      {onOpen || onEdit ? (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+          className="mt-6 flex flex-wrap items-center gap-2"
         >
-          View Full Brand Board
-          <ArrowRight
-            size={14}
-            className="transition-transform duration-200 group-hover/btn:translate-x-0.5"
-          />
-        </button>
+          {onOpen ? (
+            <button
+              type="button"
+              onClick={onOpen}
+              className="
+                group/btn inline-flex items-center gap-2 rounded-full
+                px-4 py-2 text-[13px] font-semibold
+                bg-[#F8FAFA] text-[#282728]
+                shadow-md shadow-black/25
+                transition-all duration-200
+                hover:scale-[1.03] hover:opacity-90
+              "
+            >
+              View Full
+              <ArrowRight
+                size={14}
+                className="transition-transform duration-200 group-hover/btn:translate-x-0.5"
+              />
+            </button>
+          ) : null}
+          {onEdit ? (
+            <button
+              type="button"
+              onClick={onEdit}
+              className="
+                inline-flex items-center gap-2 rounded-full border border-[#4F5052]/30
+                bg-[#282728] px-4 py-2 text-[13px] font-semibold text-[#F8FAFA]
+                transition-all duration-200 hover:border-[#4F5052]/50 hover:bg-[#282728]/90
+              "
+            >
+              Edit
+            </button>
+          ) : null}
+        </motion.div>
       ) : null}
     </motion.div>
   );

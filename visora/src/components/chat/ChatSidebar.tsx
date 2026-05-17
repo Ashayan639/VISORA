@@ -35,8 +35,8 @@ function SidebarLogo() {
       <span
         className="
           flex h-7 w-7 items-center justify-center rounded-lg
-          bg-gradient-to-br from-brand-cyan to-brand-purple
-          text-[12px] font-bold text-white shadow-md shadow-brand-cyan/20
+          bg-foreground text-background
+          text-[12px] font-bold shadow-md shadow-black/30
         "
       >
         V
@@ -55,11 +55,11 @@ function NewRealityButton({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       className="
         group inline-flex w-full items-center justify-center gap-2 rounded-lg
-        bg-gradient-to-r from-brand-cyan to-brand-purple
-        px-3 py-2.5 text-[13px] font-semibold text-white
-        shadow-md shadow-brand-cyan/20
+        bg-foreground text-background
+        px-3 py-2.5 text-[13px] font-semibold
+        shadow-md shadow-black/25
         transition-all duration-200
-        hover:shadow-lg hover:shadow-brand-purple/30
+        hover:opacity-90
       "
     >
       <SquarePen size={15} strokeWidth={2} />
@@ -126,7 +126,7 @@ function SessionRow({
           className="
             absolute right-1.5 top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-md
             opacity-0 transition-opacity duration-150
-            text-hint hover:text-state-danger hover:bg-state-danger/10
+            text-hint hover:text-foreground hover:bg-white/[0.08]
             group-hover/row:opacity-100 focus:opacity-100
             cursor-pointer
           "
@@ -210,7 +210,7 @@ function SidebarContent({
       </div>
 
       {/* Bottom: settings + theme */}
-      <div className="border-t border-white/[0.06] p-3">
+      <div className="border-t border-[#4F5052]/30 p-3">
         <div className="flex items-center justify-between gap-2 text-muted">
           <button
             type="button"
@@ -259,7 +259,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
       <aside
         className="
           hidden md:flex md:w-[240px] md:shrink-0 md:flex-col
-          border-r border-white/[0.06] bg-card/40
+          border-r border-[#4F5052]/30 bg-card/40
         "
         aria-label="Sessions sidebar"
       >
@@ -288,7 +288,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
               className="
                 fixed inset-y-0 left-0 z-50 w-[280px] md:hidden
                 bg-card/95 backdrop-blur-xl
-                border-r border-white/[0.06]
+                border-r border-[#4F5052]/30
                 shadow-2xl
               "
               aria-label="Sessions sidebar"

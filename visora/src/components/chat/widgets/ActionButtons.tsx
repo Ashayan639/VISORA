@@ -120,8 +120,8 @@ export function ActionButtons({ data, onAction }: ActionButtonsProps) {
               "transition-colors duration-200",
               "border backdrop-blur-md",
               isPrimary
-                ? "bg-gradient-to-r from-brand-cyan/15 to-brand-purple/15 border-brand-cyan/30 text-foreground hover:border-brand-cyan/60"
-                : "bg-white/[0.04] border-white/[0.08] text-foreground/85 hover:text-foreground hover:border-brand-cyan/30 hover:bg-brand-cyan/5",
+                ? "bg-gradient-to-r from-white/[0.06] to-white/[0.03] border-[#4F5052]/30 text-foreground hover:border-[#4F5052]/30"
+                : "bg-white/[0.04] border-white/[0.08] text-foreground/85 hover:text-foreground hover:border-[#4F5052]/30 hover:bg-white/[0.03]",
             )}
           >
             <Icon size={13} aria-hidden />

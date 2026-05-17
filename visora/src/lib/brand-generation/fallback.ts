@@ -111,7 +111,7 @@ const STYLE_PROFILES: Record<string, StyleProfile> = {
   modern: {
     suffix: "Labs",
     adjective: "modern, clear-headed",
-    palette: ["#020617", "#0F172A", "#38BDF8", "#A855F7", "#F8FAFC"],
+    palette: ["#0D0E10", "#282728", "#F8FAFA", "#C5C6C8", "#818283"],
     toneWords: ["sharp", "warm", "useful"],
     moodWords: ["editorial-modern", "soft-tech"],
   },
@@ -132,7 +132,7 @@ const STYLE_PROFILES: Record<string, StyleProfile> = {
   futuristic: {
     suffix: "Labs",
     adjective: "future-forward",
-    palette: ["#04060A", "#0A0F1E", "#22D3EE", "#A855F7", "#E0E7FF"],
+    palette: ["#04060A", "#0A0F1E", "#22D3EE", "#818283", "#E0E7FF"],
     toneWords: ["precise", "ambitious", "kinetic"],
     moodWords: ["neon-dusk", "soft-cyberpunk"],
   },

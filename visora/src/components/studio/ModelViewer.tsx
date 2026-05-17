@@ -114,7 +114,7 @@ function LightingSelector({
       aria-label="Lighting preset"
       className="
         inline-flex items-center gap-0.5 rounded-full p-0.5
-        bg-white/[0.03] border border-white/[0.06]
+        bg-white/[0.03] border border-[#4F5052]/30
       "
     >
       {LIGHTING_OPTIONS.map(({ id, label, icon: Icon }) => {
@@ -131,7 +131,7 @@ function LightingSelector({
               "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
               "transition-colors duration-150",
               active
-                ? "bg-brand-cyan/15 text-foreground border border-brand-cyan/30"
+                ? "bg-white/[0.06] text-foreground border border-[#4F5052]/30"
                 : "text-muted hover:text-foreground hover:bg-white/[0.04]",
               disabled && "opacity-40 cursor-not-allowed",
             )}
@@ -186,7 +186,7 @@ export function ModelViewer({
       )}
     >
       {/* ── Header ─────────────────────────────────────────── */}
-      <header className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3 sm:px-5">
+      <header className="flex items-center justify-between gap-3 border-b border-[#4F5052]/30 px-4 py-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="truncate text-[14px] font-semibold tracking-tight text-foreground">
             {title}
@@ -194,7 +194,7 @@ export function ModelViewer({
           {isLoading ? (
             <Loader2
               size={13}
-              className="shrink-0 animate-spin text-brand-cyan"
+              className="shrink-0 animate-spin text-foreground"
               aria-label="Generating"
             />
           ) : null}
@@ -234,7 +234,7 @@ export function ModelViewer({
       </div>
 
       {/* ── Footer controls ───────────────────────────────── */}
-      <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] px-3 py-2.5 sm:px-4">
+      <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#4F5052]/30 px-3 py-2.5 sm:px-4">
         <button
           type="button"
           onClick={() => setAutoRotate((v) => !v)}
@@ -244,7 +244,7 @@ export function ModelViewer({
             "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold",
             "border transition-colors duration-150 backdrop-blur-md",
             autoRotate && hasModel
-              ? "bg-brand-cyan/15 border-brand-cyan/30 text-foreground"
+              ? "bg-white/[0.06] border-[#4F5052]/30 text-foreground"
               : "bg-white/[0.04] border-white/[0.08] text-muted hover:text-foreground",
             !hasModel && "opacity-40 cursor-not-allowed",
           )}
@@ -270,7 +270,7 @@ export function ModelViewer({
               "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold",
               "border transition-colors duration-150 backdrop-blur-md",
               hasModel
-                ? "bg-white/[0.04] border-white/[0.08] text-foreground/85 hover:text-foreground hover:border-brand-cyan/30"
+                ? "bg-white/[0.04] border-white/[0.08] text-foreground/85 hover:text-foreground hover:border-[#4F5052]/30"
                 : "bg-white/[0.04] border-white/[0.08] text-muted opacity-40 cursor-not-allowed",
             )}
           >
@@ -286,7 +286,7 @@ export function ModelViewer({
               "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold",
               "transition-all duration-200",
               hasModel && onSaveToGallery
-                ? "bg-gradient-to-r from-brand-cyan to-brand-purple text-white shadow-md shadow-brand-cyan/20 hover:scale-[1.03] hover:shadow-lg hover:shadow-brand-purple/30"
+                ? "bg-foreground text-background text-white shadow-md shadow-black/25 hover:scale-[1.03] hover:shadow-lg hover:shadow-black/35"
                 : "bg-white/[0.04] border border-white/[0.08] text-muted opacity-40 cursor-not-allowed",
             )}
           >

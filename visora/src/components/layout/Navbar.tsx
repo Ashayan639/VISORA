@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { AuthModal } from "@/components/auth/AuthModal";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { PRIMARY_NAV, isLinkActive, type NavLink } from "@/lib/nav";
@@ -26,10 +27,9 @@ function Logo({ onClick }: { onClick?: () => void }) {
       <span
         className="
           flex h-8 w-8 items-center justify-center rounded-lg
-          bg-gradient-to-br from-brand-cyan to-brand-purple
-          font-bold text-white shadow-lg shadow-brand-cyan/20
+          border border-foreground bg-transparent font-bold text-foreground
           transition-shadow duration-300
-          group-hover:shadow-brand-cyan/40
+          group-hover:shadow-[0_0_24px_rgba(248,250,250,0.06)]
         "
       >
         V
@@ -48,7 +48,7 @@ function LinkPill({ link, pathname }: { link: NavLink; pathname: string }) {
         "group relative text-[14px] transition-colors duration-200",
         active ? "text-foreground" : "text-muted hover:text-foreground",
         "after:absolute after:-bottom-1.5 after:left-1/2 after:h-px after:w-0 after:-translate-x-1/2",
-        "after:bg-gradient-to-r after:from-brand-cyan after:to-brand-purple",
+        "after:bg-foreground",
         "after:transition-all after:duration-300 after:ease-out",
         "hover:after:w-full",
         active && "after:w-full",
@@ -73,8 +73,7 @@ function UserAvatar({
       onClick={onClick}
       className="
         relative h-9 w-9 overflow-hidden rounded-full
-        bg-gradient-to-br from-brand-cyan to-brand-purple
-        ring-1 ring-white/10 transition-all duration-200
+        bg-foreground ring-1 ring-[#4F5052]/30 transition-all duration-200
         hover:ring-white/30 hover:scale-105
       "
       aria-label={`Signed in as ${user.name ?? user.email ?? "user"} — click to sign out`}
@@ -103,9 +102,10 @@ function UserAvatar({
 
 export function Navbar() {
   const pathname = usePathname() ?? "/";
-  const { user, isAuthenticated, signIn, signOut } = useAuth();
+  const { profile, isAuthenticated, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   // Scroll shadow + glass background after a few pixels.
   useEffect(() => {
@@ -143,7 +143,7 @@ export function Navbar() {
           "fixed inset-x-0 top-0 z-50 w-full",
           "transition-[background-color,backdrop-filter,border-color] duration-300",
           scrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-white/[0.06]"
+            ? "bg-background/80 backdrop-blur-xl border-b border-[#4F5052]/30"
             : "bg-transparent border-b border-transparent",
         )}
       >
@@ -162,17 +162,17 @@ export function Navbar() {
 
           {/* Right: Auth + CTA (desktop) */}
           <div className="hidden md:flex items-center gap-3">
-            {isAuthenticated && user ? (
-              <UserAvatar user={user} onClick={() => signOut()} />
+            {isAuthenticated && profile ? (
+              <UserAvatar user={profile} onClick={() => void signOut()} />
             ) : (
               <button
                 type="button"
-                onClick={() => signIn()}
+                onClick={() => setAuthModalOpen(true)}
                 className="
                   rounded-full px-4 py-1.5 text-[13px] font-medium
-                  border border-brand-cyan/60 text-brand-cyan
+                  border border-[#4F5052]/30 text-muted
                   transition-colors duration-200
-                  hover:bg-brand-cyan/10 hover:border-brand-cyan
+                  hover:bg-white/[0.04] hover:border-[#818283]/50 hover:text-foreground
                 "
               >
                 Login
@@ -181,11 +181,11 @@ export function Navbar() {
             <Link
               href="/generate"
               className="
-                group relative rounded-full px-4 py-1.5 text-[13px] font-medium text-white
-                bg-gradient-to-r from-brand-cyan to-brand-purple
-                shadow-md shadow-brand-cyan/20
+                group relative rounded-full px-4 py-1.5 text-[13px] font-medium
+                bg-foreground text-background
+                shadow-md shadow-black/25
                 transition-all duration-200
-                hover:scale-105 hover:shadow-lg hover:shadow-brand-purple/30
+                hover:scale-105 hover:bg-foreground/90 hover:shadow-lg hover:shadow-black/40
               "
             >
               Start Free
@@ -270,7 +270,7 @@ export function Navbar() {
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="mt-4 flex flex-col items-center gap-3 w-full max-w-xs"
               >
-                {isAuthenticated && user ? (
+                {isAuthenticated && profile ? (
                   <button
                     type="button"
                     onClick={() => {
@@ -290,12 +290,12 @@ export function Navbar() {
                     type="button"
                     onClick={() => {
                       setMobileOpen(false);
-                      signIn();
+                      setAuthModalOpen(true);
                     }}
                     className="
                       w-full rounded-full px-4 py-2.5 text-sm font-medium
-                      border border-brand-cyan/60 text-brand-cyan
-                      hover:bg-brand-cyan/10 transition-colors
+                      border border-[#4F5052]/30 text-muted
+                      hover:bg-white/[0.04] hover:border-[#818283]/50 hover:text-foreground transition-colors
                     "
                   >
                     Login
@@ -305,9 +305,8 @@ export function Navbar() {
                   href="/generate"
                   onClick={() => setMobileOpen(false)}
                   className="
-                    w-full text-center rounded-full px-4 py-2.5 text-sm font-medium text-white
-                    bg-gradient-to-r from-brand-cyan to-brand-purple
-                    shadow-md shadow-brand-cyan/20
+                    w-full text-center rounded-full px-4 py-2.5 text-sm font-medium
+                    bg-foreground text-background shadow-md shadow-black/25
                   "
                 >
                   Start Free
@@ -317,6 +316,11 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AuthModal
+        open={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </>
   );
 }

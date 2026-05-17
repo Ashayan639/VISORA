@@ -38,7 +38,7 @@ export default function GenerateErrorBoundary({
           aria-hidden
           className="
             inline-flex h-14 w-14 items-center justify-center rounded-2xl
-            bg-state-danger/10 ring-1 ring-state-danger/30 text-state-danger
+            bg-disabled/10 ring-1 ring-disabled/30 text-muted
           "
         >
           <AlertTriangle size={24} strokeWidth={1.75} />
@@ -64,9 +64,9 @@ export default function GenerateErrorBoundary({
           onClick={reset}
           className="
             inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold
-            text-white bg-gradient-to-r from-brand-cyan to-brand-purple
-            shadow-md shadow-brand-cyan/20
-            transition-all duration-200 hover:scale-[1.03] hover:shadow-lg hover:shadow-brand-purple/30
+            bg-foreground text-background
+            shadow-md shadow-black/25
+            transition-all duration-200 hover:scale-[1.03] hover:opacity-90
           "
         >
           <RefreshCw size={14} />

@@ -80,10 +80,10 @@ function CopyButton({ text }: { text: string }) {
       aria-label={copied ? "Copied" : "Copy"}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors",
-        "border border-white/[0.06] bg-white/[0.04] backdrop-blur-md",
+        "border border-[#4F5052]/30 bg-white/[0.04] backdrop-blur-md",
         copied
-          ? "text-state-success border-state-success/30"
-          : "text-foreground/85 hover:text-foreground hover:border-brand-cyan/30",
+          ? "text-foreground border-foreground/30"
+          : "text-foreground/85 hover:text-foreground hover:border-[#4F5052]/30",
         "disabled:cursor-not-allowed disabled:opacity-50",
       )}
     >
@@ -114,7 +114,7 @@ function Section({
       initial={{ y: 8, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3, delay: 0.05 * index, ease: "easeOut" }}
-      className="overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.02]"
+      className="overflow-hidden rounded-xl border border-[#4F5052]/30 bg-white/[0.02]"
     >
       <button
         type="button"
@@ -128,7 +128,7 @@ function Section({
         <span
           className="
             inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-            bg-white/[0.04] border border-white/[0.06] text-brand-cyan
+            bg-white/[0.04] border border-[#4F5052]/30 text-foreground
           "
         >
           <Icon size={14} />
@@ -156,7 +156,7 @@ function Section({
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="space-y-2 border-t border-white/[0.06] p-3">
+            <div className="space-y-2 border-t border-[#4F5052]/30 p-3">
               <div className="rounded-md bg-background/40 p-3 text-[12.5px] leading-relaxed text-foreground/85 whitespace-pre-wrap">
                 {section.render
                   ? section.render()
@@ -252,11 +252,11 @@ export function MarketingPackWidget({ data }: MarketingPackWidgetProps) {
       className="
         relative overflow-hidden rounded-2xl p-4
         bg-white/[0.03] backdrop-blur-xl
-        border border-white/[0.06]
+        border border-[#4F5052]/30
       "
     >
-      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-purple">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-purple" />
+      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-hint" />
         Marketing Pack
       </div>
 

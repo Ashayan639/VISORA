@@ -11,6 +11,7 @@ import { NextResponse } from "next/server";
 
 import type { UserInput } from "@/types/visora";
 import { generateBrand } from "@/lib/brand-generation";
+import { sanitizeErrorMessage } from "@/lib/sanitizeError";
 
 /**
  * Use the Node runtime — the `openai` SDK relies on Node APIs and our
@@ -153,7 +154,10 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error("[api/generate-brand] unexpected error:", message);
     return withCors(
       NextResponse.json(
-        { error: "Generation failed unexpectedly.", detail: message },
+        {
+          error: "Generation failed unexpectedly.",
+          detail: sanitizeErrorMessage(message),
+        },
         { status: 500 },
       ),
     );

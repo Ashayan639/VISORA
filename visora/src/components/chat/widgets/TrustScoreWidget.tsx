@@ -12,10 +12,6 @@ interface TrustScoreWidgetProps {
   onImprove?: () => void;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Color & tone helpers
-   ───────────────────────────────────────────────────────────── */
-
 function scoreTone(score: number): "good" | "warn" | "bad" {
   if (score > 70) return "good";
   if (score >= 40) return "warn";
@@ -33,31 +29,27 @@ const TONE_CLASSES: Record<
   }
 > = {
   good: {
-    ring: "stroke-state-success",
-    text: "text-state-success",
-    bar: "bg-state-success",
-    glow: "shadow-[0_0_30px_-8px_rgba(34,197,94,0.45)]",
-    chip: "bg-state-success/10 text-state-success border-state-success/30",
+    ring: "stroke-foreground",
+    text: "text-foreground",
+    bar: "bg-foreground",
+    glow: "shadow-[0_0_30px_-8px_rgba(248,250,250,0.12)]",
+    chip: "bg-foreground/10 text-foreground border-foreground/30",
   },
   warn: {
-    ring: "stroke-state-warning",
-    text: "text-state-warning",
-    bar: "bg-state-warning",
-    glow: "shadow-[0_0_30px_-8px_rgba(245,158,11,0.45)]",
-    chip: "bg-state-warning/10 text-state-warning border-state-warning/30",
+    ring: "stroke-hint",
+    text: "text-hint",
+    bar: "bg-hint",
+    glow: "shadow-[0_0_30px_-8px_rgba(197,198,200,0.1)]",
+    chip: "bg-hint/10 text-hint border-hint/30",
   },
   bad: {
-    ring: "stroke-state-danger",
-    text: "text-state-danger",
-    bar: "bg-state-danger",
-    glow: "shadow-[0_0_30px_-8px_rgba(239,68,68,0.45)]",
-    chip: "bg-state-danger/10 text-state-danger border-state-danger/30",
+    ring: "stroke-[#4F5052]",
+    text: "text-[#4F5052]",
+    bar: "bg-[#4F5052]",
+    glow: "",
+    chip: "bg-[#4F5052]/10 text-[#4F5052] border-[#4F5052]/30",
   },
 };
-
-/* ─────────────────────────────────────────────────────────────
-   Circular score ring (SVG)
-   ───────────────────────────────────────────────────────────── */
 
 function ScoreRing({
   score,
@@ -68,11 +60,10 @@ function ScoreRing({
 }) {
   const RADIUS = 42;
   const STROKE = 8;
-  const SIZE = (RADIUS + STROKE) * 2; // 100
+  const SIZE = (RADIUS + STROKE) * 2;
   const CIRC = 2 * Math.PI * RADIUS;
   const targetOffset = CIRC * (1 - score / 100);
 
-  // Imperative count-up for the displayed number.
   const [displayed, setDisplayed] = useState(0);
   useEffect(() => {
     const controls = animate(0, score, {
@@ -84,14 +75,13 @@ function ScoreRing({
   }, [score]);
 
   return (
-    <div className="relative" style={{ width: SIZE, height: SIZE }}>
+    <motion.div className="relative" style={{ width: SIZE, height: SIZE }} initial={false}>
       <svg
         width={SIZE}
         height={SIZE}
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         aria-hidden
       >
-        {/* Track */}
         <circle
           cx={SIZE / 2}
           cy={SIZE / 2}
@@ -100,7 +90,6 @@ function ScoreRing({
           strokeWidth={STROKE}
           className="stroke-white/[0.06]"
         />
-        {/* Progress */}
         <motion.circle
           cx={SIZE / 2}
           cy={SIZE / 2}
@@ -128,13 +117,9 @@ function ScoreRing({
           / 100
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }
-
-/* ─────────────────────────────────────────────────────────────
-   Category bar (animated width)
-   ───────────────────────────────────────────────────────────── */
 
 function CategoryBar({
   name,
@@ -167,10 +152,6 @@ function CategoryBar({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   TrustScoreWidget
-   ───────────────────────────────────────────────────────────── */
-
 export function TrustScoreWidget({ data, onImprove }: TrustScoreWidgetProps) {
   const safeScore = Math.max(0, Math.min(100, Math.round(data.overallScore || 0)));
   const tone = useMemo(() => scoreTone(safeScore), [safeScore]);
@@ -184,12 +165,12 @@ export function TrustScoreWidget({ data, onImprove }: TrustScoreWidgetProps) {
       className={cn(
         "relative overflow-hidden rounded-2xl p-5",
         "bg-white/[0.03] backdrop-blur-xl",
-        "border border-white/[0.06]",
+        "border border-[#4F5052]/30",
         TONE_CLASSES[tone].glow,
       )}
     >
-      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-purple">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-purple" />
+      <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-hint">
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-hint" />
         Trust Score
       </div>
 
@@ -231,7 +212,7 @@ export function TrustScoreWidget({ data, onImprove }: TrustScoreWidgetProps) {
           <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-foreground/85">
             {topSuggestions.map((s, i) => (
               <li key={`${s}-${i}`} className="flex gap-2">
-                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-brand-purple" />
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-muted" />
                 <span>{s}</span>
               </li>
             ))}
@@ -245,15 +226,15 @@ export function TrustScoreWidget({ data, onImprove }: TrustScoreWidgetProps) {
           onClick={onImprove}
           className="
             group/btn mt-5 inline-flex items-center gap-2 rounded-full
-            px-4 py-2 text-[13px] font-semibold text-white
-            bg-gradient-to-r from-brand-cyan to-brand-purple
-            shadow-md shadow-brand-cyan/20
+            px-4 py-2 text-[13px] font-semibold
+            bg-foreground text-background
+            shadow-md shadow-black/25
             transition-all duration-200
-            hover:scale-[1.03] hover:shadow-lg hover:shadow-brand-purple/30
+            hover:scale-[1.03] hover:opacity-90
           "
         >
           <TrendingUp size={14} />
-          Improve Score
+          How to improve?
         </button>
       ) : null}
     </motion.div>

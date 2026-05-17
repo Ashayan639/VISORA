@@ -32,6 +32,7 @@ import {
   generateModel3D,
   type Model3DInput,
 } from "@/lib/fal-3d-generation";
+import { sanitizeErrorMessage } from "@/lib/sanitizeError";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -179,7 +180,7 @@ export async function POST(req: Request): Promise<NextResponse> {
             parsed.input.mode === "image_to_3d"
               ? parsed.input.imageUrl
               : undefined,
-          error: message,
+          error: sanitizeErrorMessage(message),
           durationMs: 0,
         },
         { status: 200 },

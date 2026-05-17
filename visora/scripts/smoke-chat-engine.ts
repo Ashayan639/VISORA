@@ -301,8 +301,12 @@ async function run(): Promise<void> {
     const productVisual = project.visuals?.find(
       (v) => v.visualType === "product_mockup",
     );
+    const originalProductUrl = DEMO_PROJECT.visuals.find(
+      (v) => v.visualType === "product_mockup",
+    )?.imageUrl;
     expect(
-      productVisual?.imageUrl === "/placeholder-visual.png",
+      productVisual?.imageUrl === originalProductUrl &&
+        productVisual?.imageUrl !== "https://x/new-hero.png",
       "other visuals untouched",
     );
   }

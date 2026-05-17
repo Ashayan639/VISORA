@@ -61,7 +61,13 @@ const PROBLEMS: Problem[] = [
 export function ProblemSection() {
   return (
     <section className="relative w-full py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
+      <motion.div
+        className="mx-auto max-w-7xl px-6 md:px-12"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <SectionHeading
           title="The Problem with AI-Generated Brands"
           subtitle="AI makes content easy. But easy doesn't mean trusted."
@@ -88,23 +94,25 @@ export function ProblemSection() {
               whileHover={{ scale: 1.02 }}
               className="
                 group relative rounded-2xl p-8
-                bg-white/[0.03] backdrop-blur-xl
-                border border-white/[0.06]
-                transition-[border-color,box-shadow] duration-300
-                hover:border-brand-cyan/20 hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.35)]
+                bg-card border border-[#4F5052]/30
+                transition-[border-color,box-shadow,background-color] duration-300
+                hover:bg-card-hover hover:border-[#818283]/50
+                hover:shadow-[0_0_40px_-12px_rgba(255,255,255,0.06)]
               "
             >
-              <div
+              <motion.div
                 className="
                   mb-5 inline-flex h-11 w-11 items-center justify-center
-                  rounded-xl bg-brand-cyan/10 text-brand-cyan
-                  ring-1 ring-brand-cyan/20
+                  rounded-xl bg-white/[0.04] text-foreground
+                  ring-1 ring-[#4F5052]/30
                   transition-colors duration-300
-                  group-hover:bg-brand-cyan/15
+                  group-hover:bg-white/[0.06]
                 "
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
                 <Icon size={24} strokeWidth={1.75} />
-              </div>
+              </motion.div>
               <h3 className="text-[18px] font-semibold text-foreground">{title}</h3>
               <p className="mt-2 text-[14px] leading-relaxed text-muted">
                 {description}
@@ -112,7 +120,7 @@ export function ProblemSection() {
             </motion.li>
           ))}
         </motion.ul>
-      </div>
+      </motion.div>
     </section>
   );
 }

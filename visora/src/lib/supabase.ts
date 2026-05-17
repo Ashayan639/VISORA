@@ -1,16 +1,13 @@
+import { createBrowserClient } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * VISORA — Supabase clients.
  *
- * Two clients live here:
- *   - `supabase`              → browser/anon client (safe to expose to the user).
- *   - `getServerSupabase()`   → server-only client using the service role key.
- *                               Bypasses RLS — NEVER import this in client code.
+ *   - `supabase`            → browser client (anon key, cookie-backed via @supabase/ssr).
+ *   - `getServerSupabase()`   → service-role client for server DB writes (bypasses RLS).
  *
- * If any required env var is missing, we log a one-time warning and return
- * `null` from the relevant accessor. Callers must handle the null case
- * gracefully (see `src/lib/database.ts`).
+ * If env vars are missing, clients are `null` and callers must degrade gracefully.
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,35 +21,36 @@ function warnOnce(name: string, message: string) {
   console.warn(`[visora/supabase] ${message}`);
 }
 
+function isPlaceholder(value: string | undefined): boolean {
+  if (!value) return true;
+  const v = value.trim();
+  return v.length === 0 || v.startsWith("your_");
+}
+
 // ─────────────────────────────────────────────────────────────
-// Browser / anon client (singleton)
+// Browser client (singleton)
 // ─────────────────────────────────────────────────────────────
 
-function createBrowserClient(): SupabaseClient | null {
-  if (!SUPABASE_URL) {
+function createBrowserSupabaseClient(): SupabaseClient | null {
+  if (isPlaceholder(SUPABASE_URL)) {
     warnOnce(
       "NEXT_PUBLIC_SUPABASE_URL",
       "NEXT_PUBLIC_SUPABASE_URL is not set. Browser client disabled.",
     );
     return null;
   }
-  if (!SUPABASE_ANON_KEY) {
+  if (isPlaceholder(SUPABASE_ANON_KEY)) {
     warnOnce(
       "NEXT_PUBLIC_SUPABASE_ANON_KEY",
       "NEXT_PUBLIC_SUPABASE_ANON_KEY is not set. Browser client disabled.",
     );
     return null;
   }
-  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  });
+
+  return createBrowserClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
 }
 
-export const supabase: SupabaseClient | null = createBrowserClient();
+export const supabase: SupabaseClient | null = createBrowserSupabaseClient();
 
 // ─────────────────────────────────────────────────────────────
 // Server / service-role client (lazy singleton)
@@ -61,9 +59,8 @@ export const supabase: SupabaseClient | null = createBrowserClient();
 let _serverClient: SupabaseClient | null | undefined;
 
 /**
- * Returns a privileged Supabase client for server-side use (API routes,
- * Server Components, Route Handlers). Bypasses RLS. Returns `null` if any
- * required env var is missing.
+ * Privileged Supabase client for API routes / server logic. Bypasses RLS.
+ * NEVER import in client components.
  */
 export function getServerSupabase(): SupabaseClient | null {
   if (_serverClient !== undefined) return _serverClient;
@@ -76,14 +73,14 @@ export function getServerSupabase(): SupabaseClient | null {
     return (_serverClient = null);
   }
 
-  if (!SUPABASE_URL) {
+  if (isPlaceholder(SUPABASE_URL)) {
     warnOnce(
       "NEXT_PUBLIC_SUPABASE_URL_server",
       "NEXT_PUBLIC_SUPABASE_URL is not set. Server client disabled.",
     );
     return (_serverClient = null);
   }
-  if (!SUPABASE_SERVICE_ROLE_KEY) {
+  if (isPlaceholder(SUPABASE_SERVICE_ROLE_KEY)) {
     warnOnce(
       "SUPABASE_SERVICE_ROLE_KEY",
       "SUPABASE_SERVICE_ROLE_KEY is not set. Server client disabled.",
@@ -91,7 +88,7 @@ export function getServerSupabase(): SupabaseClient | null {
     return (_serverClient = null);
   }
 
-  _serverClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  _serverClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
@@ -103,7 +100,7 @@ export function getServerSupabase(): SupabaseClient | null {
   return _serverClient;
 }
 
-/** True if either a browser or server client is available. */
+/** True when browser or service-role client is available. */
 export function isSupabaseConfigured(): boolean {
   return Boolean(supabase) || Boolean(getServerSupabase());
 }

@@ -56,7 +56,7 @@ export function RightPanel({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm lg:hidden"
           />
 
           <motion.aside
@@ -64,11 +64,11 @@ export function RightPanel({
             initial={{ x: 420, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 420, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 320, damping: 32 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className={cn(
               // Desktop: docked right column, takes part of the layout
-              "hidden md:flex md:w-[420px] md:shrink-0 md:flex-col",
-              "border-l border-white/[0.06] bg-card/40 backdrop-blur-xl",
+              "hidden lg:flex lg:w-[400px] lg:shrink-0 lg:flex-col xl:w-[420px]",
+              "border-l border-[#4F5052]/30 bg-card/40 backdrop-blur-xl",
             )}
             aria-label={TITLES[widget.type as WidgetType] ?? "Artifact panel"}
           >
@@ -86,11 +86,11 @@ export function RightPanel({
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 320, damping: 32 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="
-              fixed inset-x-0 bottom-0 z-50 md:hidden
+              fixed inset-x-0 bottom-0 z-50 lg:hidden
               max-h-[88vh] overflow-hidden
-              rounded-t-2xl border-t border-white/[0.06]
+              rounded-t-2xl border-t border-[#4F5052]/30
               bg-card/95 backdrop-blur-xl shadow-2xl
             "
             aria-label={TITLES[widget.type as WidgetType] ?? "Artifact panel"}

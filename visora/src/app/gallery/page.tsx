@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { ProjectCard } from "@/components/gallery/ProjectCard";
-import { DEMO_PROJECTS } from "@/lib/demoData";
+import { DEMO_PROJECTS, isDemoProjectId } from "@/lib/demoData";
 import { getLocalProjects } from "@/lib/galleryStorage";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/visora";
@@ -98,10 +98,13 @@ export default function GalleryPage() {
 
       let remote: Project[] = [];
       try {
-        const { getProjectsForGallery } = await import("@/lib/database");
-        remote = await getProjectsForGallery();
+        const res = await fetch("/api/projects");
+        if (res.ok) {
+          const data = (await res.json()) as { projects?: Project[] };
+          remote = data.projects ?? [];
+        }
       } catch (err) {
-        console.warn("[gallery] Supabase fetch failed:", err);
+        console.warn("[gallery] projects fetch failed:", err);
       }
 
       const local = getLocalProjects();
@@ -153,11 +156,11 @@ export default function GalleryPage() {
     <div className="relative min-h-[calc(100vh-4rem)] w-full overflow-x-hidden bg-background">
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-32 top-32 h-[520px] w-[520px] rounded-full bg-brand-purple/[0.04] blur-3xl"
+        className="pointer-events-none absolute -left-32 top-32 h-[520px] w-[520px] rounded-full bg-white/[0.02] blur-3xl"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-24 top-[40%] h-[420px] w-[420px] rounded-full bg-brand-cyan/[0.04] blur-3xl"
+        className="pointer-events-none absolute -right-24 top-[40%] h-[420px] w-[420px] rounded-full bg-white/[0.02] blur-3xl"
       />
 
       <section className="relative mx-auto w-full max-w-7xl px-5 pb-24 pt-12 sm:px-8 sm:pt-16 lg:px-12">
@@ -204,7 +207,7 @@ export default function GalleryPage() {
               : `Showing ${filtered.length} of ${total}`}
           </span>
           {isShowingDemos && status === "ready" ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-brand-cyan/30 bg-brand-cyan/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-cyan">
+            <span className="inline-flex items-center gap-1 rounded-full border border-[#4F5052]/30 bg-white/[0.04] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground">
               Demo
             </span>
           ) : null}
@@ -219,7 +222,7 @@ export default function GalleryPage() {
             </span>
           ) : null}
           {source === "mixed" && status === "ready" ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-brand-purple/25 bg-brand-purple/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-purple">
+            <span className="inline-flex items-center gap-1 rounded-full border border-muted/25 bg-white/[0.04] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">
               Cloud + local
             </span>
           ) : null}
@@ -259,7 +262,10 @@ export default function GalleryPage() {
                     }}
                     className="list-none"
                   >
-                    <ProjectCard project={p} isDemo={isShowingDemos} />
+                    <ProjectCard
+                      project={p}
+                      isDemo={isDemoProjectId(p.id) || isShowingDemos}
+                    />
                   </motion.li>
                 ))}
               </AnimatePresence>
@@ -287,7 +293,7 @@ function FilterTabs({ active, onChange, counts }: FilterTabsProps) {
       role="tablist"
       aria-label="Filter projects"
       className={cn(
-        "relative flex flex-wrap items-center gap-2 rounded-2xl border border-white/[0.06]",
+        "relative flex flex-wrap items-center gap-2 rounded-2xl border border-[#4F5052]/30",
         "bg-white/[0.03] p-1.5 backdrop-blur-xl",
       )}
     >
@@ -304,14 +310,14 @@ function FilterTabs({ active, onChange, counts }: FilterTabsProps) {
             onClick={() => onChange(f.id)}
             className={cn(
               "relative inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-[13px] font-medium",
-              "transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-cyan/40",
+              "transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4F5052]/30",
               isActive ? "text-foreground" : "text-muted hover:text-foreground",
             )}
           >
             {isActive ? (
               <motion.span
                 layoutId="visora-gallery-tab"
-                className="absolute inset-0 rounded-xl bg-gradient-to-br from-brand-cyan/15 to-brand-purple/15 ring-1 ring-inset ring-white/10"
+                className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.06] to-white/[0.03] ring-1 ring-inset ring-white/10"
                 transition={{ type: "spring", stiffness: 360, damping: 30 }}
               />
             ) : null}
@@ -342,12 +348,12 @@ function SearchBox({ value, onChange }: SearchBoxProps) {
   return (
     <label
       className={cn(
-        "group relative flex w-full items-center gap-2 rounded-2xl border border-white/[0.06]",
+        "group relative flex w-full items-center gap-2 rounded-2xl border border-[#4F5052]/30",
         "bg-white/[0.03] px-4 py-2.5 backdrop-blur-xl transition-colors",
-        "focus-within:border-brand-cyan/40 lg:max-w-sm lg:ml-auto",
+        "focus-within:border-[#4F5052]/30 lg:max-w-sm lg:ml-auto",
       )}
     >
-      <Search className="h-4 w-4 shrink-0 text-hint group-focus-within:text-brand-cyan" />
+      <Search className="h-4 w-4 shrink-0 text-hint group-focus-within:text-foreground" />
       <input
         type="search"
         value={value}
@@ -389,7 +395,7 @@ function SkeletonGrid() {
         <li
           key={i}
           aria-hidden
-          className="list-none overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03]"
+          className="list-none overflow-hidden rounded-2xl border border-[#4F5052]/30 bg-white/[0.03]"
         >
           <div className="aspect-[16/10] w-full animate-pulse bg-card-hover/40" />
           <div className="space-y-3 p-5">
@@ -416,7 +422,7 @@ function EmptyState({ hasAnySaved, hasFilter, onClearFilters }: EmptyStateProps)
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          "mx-auto flex max-w-lg flex-col items-center gap-4 rounded-2xl border border-white/[0.06]",
+          "mx-auto flex max-w-lg flex-col items-center gap-4 rounded-2xl border border-[#4F5052]/30",
           "bg-white/[0.03] px-8 py-12 text-center backdrop-blur-xl",
         )}
       >
@@ -437,7 +443,7 @@ function EmptyState({ hasAnySaved, hasFilter, onClearFilters }: EmptyStateProps)
           className={cn(
             "inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.02]",
             "px-4 py-2 text-sm font-medium text-foreground transition-colors",
-            "hover:border-brand-cyan/40 hover:bg-brand-cyan/5 hover:text-brand-cyan",
+            "hover:border-[#4F5052]/30 hover:bg-white/[0.03] hover:text-foreground",
           )}
         >
           Clear filters
@@ -451,11 +457,11 @@ function EmptyState({ hasAnySaved, hasFilter, onClearFilters }: EmptyStateProps)
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "mx-auto flex max-w-xl flex-col items-center gap-5 rounded-3xl border border-white/[0.06]",
+        "mx-auto flex max-w-xl flex-col items-center gap-5 rounded-3xl border border-[#4F5052]/30",
         "bg-white/[0.03] px-8 py-14 text-center backdrop-blur-xl",
       )}
     >
-      <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white/10 bg-gradient-to-br from-brand-cyan/15 to-brand-purple/15 text-foreground">
+      <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.03] text-foreground">
         <Inbox className="h-6 w-6" />
       </div>
       <div className="space-y-1.5">
@@ -470,9 +476,9 @@ function EmptyState({ hasAnySaved, hasFilter, onClearFilters }: EmptyStateProps)
         href="/generate"
         className={cn(
           "inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5",
-          "bg-gradient-to-r from-brand-cyan to-brand-purple text-sm font-semibold text-white",
-          "shadow-md shadow-brand-cyan/20 transition-transform duration-200 hover:scale-[1.02]",
-          "focus:outline-none focus:ring-2 focus:ring-brand-cyan/40",
+          "bg-foreground text-background text-sm font-semibold text-white",
+          "shadow-md shadow-black/25 transition-transform duration-200 hover:scale-[1.02]",
+          "focus:outline-none focus:ring-2 focus:ring-[#4F5052]/30",
         )}
       >
         Create Your First

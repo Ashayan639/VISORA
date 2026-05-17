@@ -28,8 +28,21 @@ import type { VisualType } from "@/types/visora";
  */
 export const FLUX_MODEL = "fal-ai/flux/schnell";
 
-/** Public path of the placeholder served when generation fails. */
+/** Default placeholder when type/title are unknown. */
 export const PLACEHOLDER_VISUAL_URL = "/placeholder-visual.png";
+
+export function placeholderUrlForVisual(
+  visualType: string,
+  title?: string,
+  brandName?: string,
+): string {
+  const params = new URLSearchParams({
+    type: visualType || "visual",
+    title: title || visualType.replace(/_/g, " ") || "VISORA visual",
+  });
+  if (brandName) params.set("brand", brandName);
+  return `/api/placeholder?${params.toString()}`;
+}
 
 /** Image size keys recognised by the flux endpoints. */
 type FalImageSize =
@@ -143,7 +156,10 @@ function makeFallback(
   reason: string,
 ): VisualResult {
   return {
-    imageUrl: PLACEHOLDER_VISUAL_URL,
+    imageUrl: placeholderUrlForVisual(
+      input.visualType,
+      input.title,
+    ),
     visualType: input.visualType,
     prompt: input.prompt,
     status: "fallback",

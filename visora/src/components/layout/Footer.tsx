@@ -23,10 +23,9 @@ function LogoBlock() {
         <span
           className="
             flex h-8 w-8 items-center justify-center rounded-lg
-            bg-gradient-to-br from-brand-cyan to-brand-purple
-            font-bold text-white shadow-lg shadow-brand-cyan/20
+            bg-foreground font-bold text-background shadow-lg shadow-black/30
             transition-shadow duration-300
-            group-hover:shadow-brand-cyan/40
+            group-hover:shadow-black/50
           "
         >
           V
@@ -39,7 +38,7 @@ function LogoBlock() {
         {APP.tagline}
         <br />
         Powered by{" "}
-        <span className="text-brand-cyan">fal.ai</span>.
+        <span className="text-foreground">fal.ai</span>.
       </p>
       <p className="text-xs text-hint">Built for the Best Use of fal track.</p>
     </div>
@@ -101,9 +100,9 @@ function BadgeStack() {
               className="
                 inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium
                 bg-white/[0.03] backdrop-blur-xl
-                border border-white/[0.06] text-muted
+                border border-[#4F5052]/30 text-muted
                 transition-colors duration-200
-                hover:border-brand-cyan/40 hover:text-foreground
+                hover:border-[#818283]/50 hover:text-foreground
               "
             >
               {badge.label}
@@ -114,7 +113,7 @@ function BadgeStack() {
               className="
                 inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium
                 bg-white/[0.03] backdrop-blur-xl
-                border border-white/[0.06] text-muted
+                border border-[#4F5052]/30 text-muted
               "
             >
               {badge.label}
@@ -142,7 +141,7 @@ export function Footer() {
       className="
         relative w-full
         bg-card-deep
-        border-t border-white/[0.06]
+        border-t border-[#4F5052]/30
       "
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -184,7 +183,7 @@ export function Footer() {
               bg-white/[0.03] backdrop-blur-xl
               border border-white/[0.06] text-muted
               transition-colors duration-200
-              hover:text-foreground hover:border-brand-cyan/40
+              hover:text-foreground hover:border-[#818283]/50
             "
           >
             <GithubIcon size={16} />

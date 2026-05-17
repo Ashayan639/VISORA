@@ -18,12 +18,12 @@ interface WebsitePreviewWidgetProps {
 
 function BrowserChrome({ domain }: { domain: string }) {
   return (
-    <div className="flex items-center gap-2 border-b border-white/[0.06] bg-card/60 px-3 py-2">
+    <div className="flex items-center gap-2 border-b border-[#4F5052]/30 bg-card/60 px-3 py-2">
       {/* Traffic-light dots */}
       <div className="flex shrink-0 items-center gap-1.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-state-danger/80" />
-        <span className="h-2.5 w-2.5 rounded-full bg-state-warning/80" />
-        <span className="h-2.5 w-2.5 rounded-full bg-state-success/80" />
+        <span className="h-2.5 w-2.5 rounded-full bg-disabled/80" />
+        <span className="h-2.5 w-2.5 rounded-full bg-hint/80" />
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/80" />
       </div>
 
       {/* Address bar */}
@@ -31,7 +31,7 @@ function BrowserChrome({ domain }: { domain: string }) {
         className="
           ml-2 flex flex-1 items-center gap-2 truncate
           rounded-md bg-background/60 px-2.5 py-1
-          border border-white/[0.06]
+          border border-[#4F5052]/30
           text-[11px] font-mono text-muted
         "
       >
@@ -70,12 +70,12 @@ export function WebsitePreviewWidget({
       className="
         relative overflow-hidden rounded-2xl
         bg-white/[0.03] backdrop-blur-xl
-        border border-white/[0.06]
+        border border-[#4F5052]/30
       "
     >
       <div className="flex items-center justify-between px-4 pt-3">
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-cyan" />
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-foreground" />
           Website Preview
         </div>
         {onOpen ? (
@@ -95,14 +95,14 @@ export function WebsitePreviewWidget({
       </div>
 
       {/* Browser frame */}
-      <div className="mt-3 overflow-hidden rounded-xl border border-white/[0.06]">
+      <div className="mt-3 overflow-hidden rounded-xl border border-[#4F5052]/30">
         <BrowserChrome domain={url} />
 
         {/* Hero body */}
         <div
           className="
             relative
-            bg-[radial-gradient(60%_50%_at_30%_30%,rgba(56,189,248,0.10),transparent_70%),radial-gradient(60%_50%_at_80%_60%,rgba(168,85,247,0.10),transparent_70%)]
+            bg-[radial-gradient(60%_50%_at_30%_30%,rgba(255,255,255,0.10),transparent_70%),radial-gradient(60%_50%_at_80%_60%,rgba(129,130,131,0.10),transparent_70%)]
             px-5 py-8 sm:px-7 sm:py-10
           "
         >
@@ -138,8 +138,8 @@ export function WebsitePreviewWidget({
               className="
                 mt-4 inline-flex items-center gap-1.5 rounded-full
                 px-3 py-1.5 text-[11px] font-semibold text-white
-                bg-gradient-to-r from-brand-cyan to-brand-purple
-                shadow-md shadow-brand-cyan/20
+                bg-foreground text-background
+                shadow-md shadow-black/25
               "
             >
               {data.cta}
@@ -149,13 +149,13 @@ export function WebsitePreviewWidget({
 
           {/* Trust signals strip */}
           {data.trustSignals?.length ? (
-            <div className="mt-5 flex flex-wrap gap-1.5 border-t border-white/[0.06] pt-3">
+            <div className="mt-5 flex flex-wrap gap-1.5 border-t border-[#4F5052]/30 pt-3">
               {data.trustSignals.slice(0, 4).map((sig) => (
                 <span
                   key={sig}
                   className="
                     rounded-full px-2 py-0.5 text-[10px] text-hint
-                    border border-white/[0.06]
+                    border border-[#4F5052]/30
                   "
                 >
                   {sig}
@@ -175,10 +175,10 @@ export function WebsitePreviewWidget({
             className="
               group/btn inline-flex items-center gap-2 rounded-full
               px-4 py-2 text-[12px] font-semibold text-white
-              bg-gradient-to-r from-brand-cyan to-brand-purple
-              shadow-md shadow-brand-cyan/20
+              bg-foreground text-background
+              shadow-md shadow-black/25
               transition-all duration-200
-              hover:scale-[1.03] hover:shadow-lg hover:shadow-brand-purple/30
+              hover:scale-[1.03] hover:shadow-lg hover:shadow-black/35
             "
           >
             View Full Preview

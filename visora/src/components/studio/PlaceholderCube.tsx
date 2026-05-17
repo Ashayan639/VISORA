@@ -31,7 +31,7 @@ export function PlaceholderCube({
     <div
       className={cn(
         "relative flex h-full w-full flex-col items-center justify-center overflow-hidden",
-        "bg-[radial-gradient(120%_80%_at_50%_20%,rgba(56,189,248,0.10),transparent_60%),radial-gradient(120%_80%_at_50%_100%,rgba(168,85,247,0.10),transparent_60%)]",
+        "bg-[radial-gradient(120%_80%_at_50%_20%,rgba(255,255,255,0.10),transparent_60%),radial-gradient(120%_80%_at_50%_100%,rgba(129,130,131,0.10),transparent_60%)]",
         className,
       )}
     >
@@ -49,7 +49,7 @@ export function PlaceholderCube({
       <div
         className={cn(
           "relative animate-visora-cube-spin",
-          pulse && "[filter:drop-shadow(0_0_18px_rgba(56,189,248,0.45))]",
+          pulse && "[filter:drop-shadow(0_0_18px_rgba(255,255,255,0.45))]",
         )}
         aria-hidden
       >
@@ -60,7 +60,7 @@ export function PlaceholderCube({
           fill="none"
           stroke="currentColor"
           strokeWidth="1.4"
-          className="text-brand-cyan/85"
+          className="text-foreground/85"
         >
           <path d="M50 12 L82 28 L50 44 L18 28 Z" />
           <path d="M18 28 L18 64 L50 80 L50 44 Z" />

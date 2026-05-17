@@ -147,18 +147,18 @@ export function ChatInput({
   }, []);
 
   return (
-    <div className="w-full px-4 pb-4 sm:px-6 sm:pb-6">
+    <div className="safe-bottom w-full shrink-0 px-4 pb-4 sm:px-6 sm:pb-6">
       {/* Attachment / error chip row */}
       {(attachment || uploadError) && (
         <div className="mx-auto mb-2 flex w-full max-w-3xl flex-wrap items-center gap-2">
           {attachment ? (
             <div
               className="
-                inline-flex items-center gap-2 rounded-full border border-brand-cyan/30
-                bg-brand-cyan/10 py-1 pl-2 pr-1 text-[12px] text-foreground
+                inline-flex items-center gap-2 rounded-full border border-muted/30
+                bg-muted/10 py-1 pl-2 pr-1 text-[12px] text-foreground
               "
             >
-              <ImageIcon size={12} className="text-brand-cyan" aria-hidden />
+              <ImageIcon size={12} className="text-hint" aria-hidden />
               <span className="max-w-[180px] truncate">
                 {attachment.name ?? "image"}
               </span>
@@ -176,7 +176,7 @@ export function ChatInput({
             </div>
           ) : null}
           {uploadError ? (
-            <span className="text-[12px] text-state-danger">{uploadError}</span>
+            <span className="text-[12px] text-muted">{uploadError}</span>
           ) : null}
         </div>
       )}
@@ -184,11 +184,11 @@ export function ChatInput({
       <div
         className={cn(
           "mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl",
-          "bg-card/80 backdrop-blur-xl",
-          "border border-white/[0.06]",
+          "bg-card-hover backdrop-blur-xl",
+          "border border-[#4F5052]/30",
           "px-3 py-2.5",
           "transition-[border-color,box-shadow] duration-200",
-          "focus-within:border-brand-cyan/40 focus-within:shadow-[0_0_30px_-12px_rgba(56,189,248,0.35)]",
+          "focus-within:border-muted/40 focus-within:shadow-[0_0_30px_-12px_rgba(0,0,0,0.35)]",
         )}
       >
         {enableImageUpload ? (
@@ -256,12 +256,12 @@ export function ChatInput({
           disabled={!canSend}
           aria-label="Send message"
           className={cn(
-            "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white",
-            "bg-gradient-to-br from-brand-cyan to-brand-purple",
-            "shadow-md shadow-brand-cyan/20",
+            "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+            "bg-foreground text-background",
+            "shadow-md shadow-black/25",
             "transition-all duration-200",
             canSend
-              ? "hover:scale-105 hover:shadow-lg hover:shadow-brand-purple/40"
+              ? "hover:scale-105 hover:opacity-90"
               : "opacity-40 cursor-not-allowed shadow-none",
           )}
         >

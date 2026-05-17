@@ -11,7 +11,7 @@ import { MarketingPackWidget } from "@/components/chat/widgets/MarketingPackWidg
 import { Model3DPreview } from "@/components/chat/widgets/Model3DPreview";
 import { TrustScoreWidget } from "@/components/chat/widgets/TrustScoreWidget";
 import { WebsitePreviewWidget } from "@/components/chat/widgets/WebsitePreviewWidget";
-import { DEMO_PROJECTS } from "@/lib/demoData";
+import { findDemoProject } from "@/lib/demoData";
 import { getLocalProjects } from "@/lib/galleryStorage";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/visora";
@@ -68,7 +68,7 @@ export default function GalleryDetailPage({ params }: DetailPageProps) {
       }
 
       // 3. Demo
-      const demo = DEMO_PROJECTS.find((p) => p.id === id);
+      const demo = findDemoProject(id);
       if (!cancelled && demo) {
         setProject(demo);
         setStatus("ready");
@@ -91,11 +91,11 @@ export default function GalleryDetailPage({ params }: DetailPageProps) {
     <div className="relative min-h-[calc(100vh-4rem)] w-full overflow-x-hidden bg-background">
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-32 top-32 h-[480px] w-[480px] rounded-full bg-brand-purple/[0.04] blur-3xl"
+        className="pointer-events-none absolute -left-32 top-32 h-[480px] w-[480px] rounded-full bg-white/[0.02] blur-3xl"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-24 top-[40%] h-[420px] w-[420px] rounded-full bg-brand-cyan/[0.04] blur-3xl"
+        className="pointer-events-none absolute -right-24 top-[40%] h-[420px] w-[420px] rounded-full bg-white/[0.02] blur-3xl"
       />
 
       <div className="relative mx-auto w-full max-w-5xl px-5 pb-24 pt-10 sm:px-8 lg:px-12">
@@ -116,8 +116,8 @@ export default function GalleryDetailPage({ params }: DetailPageProps) {
           <Link
             href="/generate"
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold text-white",
-              "bg-gradient-to-br from-brand-cyan to-brand-purple",
+              "inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold",
+              "bg-foreground text-background",
               "transition-transform duration-200 hover:scale-[1.02]",
             )}
           >
@@ -223,7 +223,7 @@ function Missing({ id }: { id: string }) {
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         "mx-auto mt-16 flex max-w-lg flex-col items-center gap-4 rounded-2xl",
-        "border border-white/[0.06] bg-card/60 px-8 py-12 text-center backdrop-blur-xl",
+        "border border-[#4F5052]/30 bg-card/60 px-8 py-12 text-center backdrop-blur-xl",
       )}
     >
       <h2 className="text-lg font-semibold text-foreground">
@@ -240,7 +240,7 @@ function Missing({ id }: { id: string }) {
         href="/gallery"
         className={cn(
           "inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-4 py-2",
-          "text-sm font-medium text-foreground hover:border-brand-cyan/40 hover:text-brand-cyan",
+          "text-sm font-medium text-foreground hover:border-[#4F5052]/30 hover:text-foreground",
         )}
       >
         Back to gallery

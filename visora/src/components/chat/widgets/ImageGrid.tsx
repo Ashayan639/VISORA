@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Maximize2, RefreshCw } from "lucide-react";
 
+import { ImageTileSkeleton } from "@/components/ui/Skeleton";
 import type { VisualAsset } from "@/types/visora";
 import { cn } from "@/lib/utils";
 
@@ -23,10 +24,10 @@ const STATUS_COPY: Record<VisualAsset["status"], string> = {
 };
 
 const STATUS_TONE: Record<VisualAsset["status"], string> = {
-  loading: "bg-brand-cyan/10 text-brand-cyan border-brand-cyan/30",
-  generated: "bg-state-success/10 text-state-success border-state-success/30",
-  fallback: "bg-state-warning/10 text-state-warning border-state-warning/30",
-  error: "bg-state-danger/10 text-state-danger border-state-danger/30",
+  loading: "bg-muted/10 text-muted border-muted/30",
+  generated: "bg-foreground/10 text-foreground border-foreground/30",
+  fallback: "bg-hint/10 text-hint border-hint/30",
+  error: "bg-disabled/10 text-muted border-disabled/30",
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -47,41 +48,66 @@ function ImageTile({
   const isLoading = asset.status === "loading";
 
   return (
-    <motion.div
+        <motion.div
       initial={{ y: 14, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay, ease: "easeOut" }}
-      className="
-        group relative aspect-square overflow-hidden rounded-xl
-        bg-card-hover/40 border border-white/[0.06]
-        transition-colors duration-200 hover:border-brand-cyan/20
-      "
+      className={cn(
+        "group relative aspect-square overflow-hidden rounded-xl",
+        "bg-[#282728] border border-[#4F5052]/30",
+        "transition-[transform,border-color] duration-200",
+        "hover:scale-[1.02] hover:border-muted/30",
+      )}
     >
       {/* Image OR skeleton */}
-      {asset.imageUrl ? (
+      {isLoading && !asset.imageUrl ? (
+        <ImageTileSkeleton />
+      ) : asset.imageUrl ? (
         // Using <img> rather than next/image because fal.ai returns
         // arbitrary cross-domain URLs; configuring next.config remoteImages
         // for every provider is too brittle for the hackathon.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <motion.img
+          key={asset.imageUrl}
           src={asset.imageUrl}
           alt={asset.title}
+          initial={{ opacity: 0, scale: 1.02 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
           className="h-full w-full object-cover"
           draggable={false}
         />
       ) : (
-        <div
+        <motion.div
           className={cn(
-            "flex h-full w-full items-center justify-center",
-            "bg-gradient-to-br from-brand-cyan/10 via-card-hover/30 to-brand-purple/10",
+            "flex h-full w-full flex-col items-center justify-center gap-2 p-3",
+            "bg-[#282728]",
             isLoading && "animate-pulse",
           )}
         >
-          <span className="px-3 text-center text-[11px] uppercase tracking-wider text-hint">
+          <span className="text-center text-[11px] font-semibold uppercase tracking-wider text-[#F8FAFA]/70">
             {isLoading ? "Generating…" : asset.title}
           </span>
-        </div>
+          {!isLoading && asset.prompt ? (
+            <span className="line-clamp-4 text-center text-[10px] leading-snug text-[#F8FAFA]/50">
+              {asset.prompt}
+            </span>
+          ) : null}
+        </motion.div>
       )}
+
+      {asset.status === "fallback" && asset.prompt ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.35 }}
+          className="pointer-events-none absolute inset-x-0 bottom-8 max-h-[40%] overflow-hidden px-2"
+          aria-hidden
+        >
+          <p className="line-clamp-3 text-[9px] leading-snug text-[#F8FAFA]/50">
+            {asset.prompt}
+          </p>
+        </motion.div>
+      ) : null}
 
       {/* Bottom gradient + title overlay */}
       <div
@@ -127,7 +153,7 @@ function ImageTile({
               inline-flex h-7 w-7 items-center justify-center rounded-md
               bg-background/70 backdrop-blur-md
               text-foreground/85 border border-white/[0.08]
-              transition-colors hover:text-foreground hover:border-brand-cyan/30
+              transition-colors hover:text-foreground hover:border-muted/40
             "
           >
             <RefreshCw size={13} />
@@ -145,7 +171,7 @@ function ImageTile({
               inline-flex h-7 w-7 items-center justify-center rounded-md
               bg-background/70 backdrop-blur-md
               text-foreground/85 border border-white/[0.08]
-              transition-colors hover:text-foreground hover:border-brand-cyan/30
+              transition-colors hover:text-foreground hover:border-muted/40
             "
           >
             <Maximize2 size={13} />
@@ -176,30 +202,30 @@ export function ImageGrid({
       className="
         relative overflow-hidden rounded-2xl p-4
         bg-white/[0.03] backdrop-blur-xl
-        border border-white/[0.06]
+        border border-[#4F5052]/30
       "
     >
       <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-cyan">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-cyan" />
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-hint">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-hint" />
           fal.ai Visuals
         </div>
         <span
           className="
             inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium
             bg-white/[0.04] backdrop-blur-md
-            border border-white/[0.06] text-muted
+            border border-[#4F5052]/30 text-muted
           "
         >
           Powered by{" "}
-          <span className="bg-gradient-to-r from-brand-cyan to-brand-purple bg-clip-text font-semibold text-transparent">
+          <span className="font-semibold text-foreground">
             fal.ai
           </span>
         </span>
       </div>
 
       {items.length === 0 ? (
-        <div className="flex items-center justify-center rounded-xl border border-dashed border-white/[0.06] p-6 text-sm text-hint">
+        <div className="flex items-center justify-center rounded-xl border border-dashed border-[#4F5052]/30 p-6 text-sm text-hint">
           No visuals yet — once fal.ai responds, they&apos;ll land here.
         </div>
       ) : (
@@ -225,8 +251,8 @@ export function ImageGrid({
           className="
             mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-[12px] font-semibold
             bg-white/[0.03] backdrop-blur-md
-            border border-white/[0.06] text-foreground/85
-            transition-colors hover:bg-white/[0.05] hover:border-brand-cyan/30
+            border border-[#4F5052]/30 text-foreground/85
+            transition-colors hover:bg-white/[0.05] hover:border-muted/40
           "
         >
           <Maximize2 size={13} />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type { Widget } from "@/types/visora";
 import { ChatArea } from "@/components/chat/ChatArea";
@@ -11,20 +11,6 @@ import { useChatSession } from "@/hooks/useChatSession";
 
 /**
  * /generate — the core VISORA workspace.
- *
- * Three-column shell:
- *   • Left  : `ChatSidebar` (sessions list, "New Reality" button)
- *   • Center: `ChatArea`     (header, message stream, composer)
- *   • Right : `RightPanel`   (artifact viewer; closed by default)
- *
- * State here is intentionally thin — `useChatSession` owns the chat
- * model (messages, sessions, project, isGenerating) so the engine and
- * the persistence layer can be exercised in isolation. The page only
- * holds UI state (mobile drawer, which widget is in the right panel).
- *
- * The container is `h-[calc(100vh-4rem)]` — viewport minus the 64px
- * navbar set in `src/app/layout.tsx`. `overflow-hidden` keeps the
- * marketing footer below the fold so the workspace feels like an app.
  */
 export default function GeneratePage() {
   const {
@@ -37,17 +23,31 @@ export default function GeneratePage() {
     switchSession,
     newSession,
     removeSession,
+    loadDemo,
+    isDemoMode,
+    error,
+    retry,
+    saveToGallery,
   } = useChatSession();
 
-  // Mobile sidebar drawer state.
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [manualPanel, setManualPanel] = useState<Widget | null>(null);
+  const [dismissedModelUrl, setDismissedModelUrl] = useState<string | null>(null);
 
-  // Right-side artifact viewer ({ type, data } shape, i.e. Widget | null).
-  const [rightPanelContent, setRightPanelContent] = useState<Widget | null>(null);
+  const autoModelPanel = useMemo((): Widget | null => {
+    const model = currentProject.model3d;
+    if (
+      model?.status === "generated" &&
+      model.modelUrl &&
+      dismissedModelUrl !== model.modelUrl
+    ) {
+      return { type: "model_3d", data: model };
+    }
+    return null;
+  }, [currentProject.model3d, dismissedModelUrl]);
 
-  // Header title prefers the brand name we've actually generated this
-  // session over the sidebar metadata, so it stays in sync if the user
-  // hasn't navigated away yet (sidebar metadata only updates on yield).
+  const rightPanelContent = manualPanel ?? autoModelPanel;
+
   const activeSession = sessions.find((s) => s.id === sessionId);
   const headerTitle =
     currentProject.brandResult?.brandName ??
@@ -56,32 +56,42 @@ export default function GeneratePage() {
 
   const handleNewSession = useCallback(() => {
     newSession();
-    setRightPanelContent(null);
+    setManualPanel(null);
+    setDismissedModelUrl(null);
     setSidebarOpen(false);
   }, [newSession]);
 
   const handleSwitchSession = useCallback(
     (id: string) => {
       switchSession(id);
-      setRightPanelContent(null);
+      setManualPanel(null);
+      setDismissedModelUrl(null);
       setSidebarOpen(false);
     },
     [switchSession],
   );
 
-  /**
-   * Default behavior for widget action buttons:
-   *
-   *   • `new_chat`  → start a fresh session
-   *   • `open*`     → no-op (the widget itself is what surfaces the panel
-   *                    via its primary CTA; this is just a hint)
-   *   • everything  → send the action's `payload.message` (or its label)
-   *     else          back through the chat so the AI can respond
-   */
+  const handleClosePanel = useCallback(() => {
+    const modelUrl = currentProject.model3d?.modelUrl;
+    if (modelUrl && !manualPanel) {
+      setDismissedModelUrl(modelUrl);
+    }
+    setManualPanel(null);
+  }, [currentProject.model3d?.modelUrl, manualPanel]);
+
   const handleWidgetAction = useCallback(
     (action: ChatAction) => {
       if (action.intent === "new_chat" || action.intent === "new") {
         handleNewSession();
+        return;
+      }
+
+      if (
+        action.intent === "save_project" ||
+        action.intent === "save" ||
+        /\bsave\b/i.test(action.label)
+      ) {
+        void saveToGallery();
         return;
       }
 
@@ -90,13 +100,22 @@ export default function GeneratePage() {
           ? (action.payload.message as string)
           : action.label;
 
+      if (
+        message &&
+        /\b(save|gallery)\b/i.test(message) &&
+        currentProject.brandResult
+      ) {
+        void saveToGallery();
+        return;
+      }
+
       if (message) sendMessage(message);
     },
-    [handleNewSession, sendMessage],
+    [currentProject.brandResult, handleNewSession, saveToGallery, sendMessage],
   );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
+    <div className="flex h-[calc(100dvh-4rem)] min-h-0 w-full max-w-[100vw] overflow-hidden bg-background">
       <ChatSidebar
         sessions={sessions}
         activeSessionId={sessionId}
@@ -112,15 +131,18 @@ export default function GeneratePage() {
         messages={messages}
         isGenerating={isGenerating}
         onSend={sendMessage}
-        onOpenWidget={setRightPanelContent}
+        onOpenWidget={setManualPanel}
         onWidgetAction={handleWidgetAction}
         onOpenSidebar={() => setSidebarOpen(true)}
+        isDemoMode={isDemoMode}
+        onTryDemo={loadDemo}
+        error={error?.message ?? null}
+        onRetry={error?.retryText ? retry : undefined}
       />
 
       <RightPanel
         widget={rightPanelContent}
-        onClose={() => setRightPanelContent(null)}
-        // Hooks for later: wire to real regenerate / download actions.
+        onClose={handleClosePanel}
         onRegenerate={undefined}
         onDownload={undefined}
       />

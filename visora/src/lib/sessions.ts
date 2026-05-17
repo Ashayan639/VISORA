@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/types/visora";
+import type { ChatMessage, Project } from "@/types/visora";
 
 /**
  * VISORA — Local chat session storage.
@@ -22,11 +22,20 @@ export interface SessionMeta {
   createdAt: string;
   /** ISO 8601 — drives sort order in the sidebar (newest first). */
   updatedAt: string;
+  /** Linked gallery project id after "Save to Gallery". */
+  galleryProjectId?: string;
+  /** When true, row was restored from a saved gallery project. */
+  fromGallery?: boolean;
 }
 
 const SESSIONS_KEY = "visora:sessions";
 const LAST_ACTIVE_KEY = "visora:last-active-session";
 const messagesKey = (sessionId: string) => `visora:session:${sessionId}:messages`;
+const projectKey = (sessionId: string) => `visora:session:${sessionId}:project`;
+const galleryChatKey = (projectId: string) => `visora:project:${projectId}:messages`;
+
+/** Global project snapshot when no session id is bound yet. */
+export const GLOBAL_PROJECT_KEY = "visora:current-project";
 
 // ─────────────────────────────────────────────────────────────
 // Low-level storage primitives (SSR-safe)
@@ -108,6 +117,7 @@ export function deleteSession(id: string): void {
     all.filter((s) => s.id !== id),
   );
   removeKey(messagesKey(id));
+  removeKey(projectKey(id));
   if (getLastActiveSessionId() === id) setLastActiveSessionId(null);
 }
 
@@ -138,6 +148,21 @@ export function saveMessages(
   writeJSON(messagesKey(sessionId), messages);
 }
 
+export function loadProject(sessionId: string): Partial<Project> {
+  if (!sessionId) {
+    return readJSON<Partial<Project>>(GLOBAL_PROJECT_KEY, {});
+  }
+  return readJSON<Partial<Project>>(projectKey(sessionId), {});
+}
+
+export function saveProject(
+  sessionId: string | null,
+  project: Partial<Project>,
+): void {
+  const key = sessionId ? projectKey(sessionId) : GLOBAL_PROJECT_KEY;
+  writeJSON(key, project);
+}
+
 /** Generate a short URL-safe session id. */
 export function makeSessionId(): string {
   const c =
@@ -152,4 +177,27 @@ export function makePreview(input: string, max = 80): string {
   const flat = input.replace(/\s+/g, " ").trim();
   if (flat.length <= max) return flat;
   return `${flat.slice(0, max - 1)}…`;
+}
+
+/** Persist chat transcript keyed by gallery project id (local resume). */
+export function saveGalleryProjectChat(
+  projectId: string,
+  messages: ChatMessage[],
+): void {
+  if (!projectId) return;
+  writeJSON(galleryChatKey(projectId), messages);
+}
+
+export function loadGalleryProjectChat(projectId: string): ChatMessage[] {
+  if (!projectId) return [];
+  return readJSON<ChatMessage[]>(galleryChatKey(projectId), []);
+}
+
+/** Find a local session already linked to this gallery project. */
+export function findSessionByGalleryProjectId(
+  galleryProjectId: string,
+): SessionMeta | null {
+  return (
+    listSessions().find((s) => s.galleryProjectId === galleryProjectId) ?? null
+  );
 }

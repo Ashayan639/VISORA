@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 
+import { AppShell } from "@/components/layout/AppShell";
 import { AuthProvider } from "@/components/providers/AuthProvider";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "VISORA — Visual Business Reality Engine",
@@ -27,18 +19,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className="h-full bg-background antialiased"
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col bg-background text-foreground font-sans"
+        className="flex min-h-full min-h-[100dvh] flex-col overflow-x-hidden bg-background font-sans text-foreground"
         suppressHydrationWarning
       >
         <AuthProvider>
-          <Navbar />
-          {/* `pt-16` clears the 64px fixed navbar. */}
-          <main className="flex-1 pt-16">{children}</main>
-          <Footer />
+          <AppShell>{children}</AppShell>
         </AuthProvider>
       </body>
     </html>

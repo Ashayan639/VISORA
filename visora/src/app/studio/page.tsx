@@ -242,7 +242,7 @@ export default function StudioPage() {
       <aside
         className={cn(
           "hidden md:flex md:w-[440px] md:shrink-0 md:flex-col",
-          "border-l border-white/[0.06]",
+          "border-l border-[#4F5052]/30",
         )}
         aria-label="3D viewer"
       >
@@ -275,7 +275,7 @@ export default function StudioPage() {
               className="
                 fixed inset-x-0 bottom-0 z-50 md:hidden
                 h-[80vh]
-                rounded-t-2xl border-t border-white/[0.06]
+                rounded-t-2xl border-t border-[#4F5052]/30
                 bg-card/95 backdrop-blur-xl shadow-2xl
                 overflow-hidden
               "
@@ -317,8 +317,8 @@ export default function StudioPage() {
           className="
             fixed bottom-24 right-4 z-30 md:hidden
             inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold text-white
-            bg-gradient-to-r from-brand-cyan to-brand-purple
-            shadow-md shadow-brand-cyan/20
+            bg-foreground text-background
+            shadow-md shadow-black/25
           "
         >
           <ChevronUp size={13} />

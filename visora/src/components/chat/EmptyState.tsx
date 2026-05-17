@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Box, Globe, Lightbulb, Play, type LucideIcon } from "lucide-react";
+import { Box, Globe, Lightbulb, Sparkles, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,14 @@ type NavigateSuggestion = {
   href: string;
 };
 
-type Suggestion = SendSuggestion | NavigateSuggestion;
+type DemoSuggestion = {
+  kind: "demo";
+  icon: LucideIcon;
+  title: string;
+  prompt: string;
+};
+
+type Suggestion = SendSuggestion | NavigateSuggestion | DemoSuggestion;
 
 const SUGGESTIONS: Suggestion[] = [
   {
@@ -51,16 +58,18 @@ const SUGGESTIONS: Suggestion[] = [
     href: "/studio",
   },
   {
-    kind: "send",
-    icon: Play,
-    title: "Show me a demo",
-    prompt: "Show me a demo with Urban Brew Ceylon",
+    kind: "demo",
+    icon: Sparkles,
+    title: "Try Demo",
+    prompt: "Load Urban Brew Ceylon — brand, trust, visuals, site, and marketing pack instantly.",
   },
 ];
 
 interface EmptyStateProps {
   /** Fired when a `kind: "send"` suggestion card is clicked. */
   onPickSuggestion: (prompt: string) => void;
+  /** Fired when "Try Demo" is clicked — loads full demo instantly. */
+  onTryDemo?: () => void;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -82,7 +91,7 @@ function SuggestionCardBody({
       <span
         className="
           inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
-          bg-brand-cyan/10 text-brand-cyan ring-1 ring-brand-cyan/20
+          bg-card text-muted ring-1 ring-[#4F5052]/30
         "
       >
         <Icon size={18} strokeWidth={1.75} />
@@ -101,7 +110,7 @@ function SuggestionCardBody({
    EmptyState
    ───────────────────────────────────────────────────────────── */
 
-export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
+export function EmptyState({ onPickSuggestion, onTryDemo }: EmptyStateProps) {
   return (
     <div className="flex flex-1 items-center justify-center px-6 py-12">
       <motion.div
@@ -122,16 +131,16 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="
             relative flex h-20 w-20 items-center justify-center rounded-2xl
-            bg-gradient-to-br from-brand-cyan to-brand-purple
-            shadow-[0_20px_60px_-15px_rgba(56,189,248,0.5)]
+            border border-foreground bg-transparent
+            shadow-[0_0_80px_rgba(248,250,250,0.03)]
           "
         >
-          <span className="text-4xl font-bold text-white">V</span>
+          <span className="text-4xl font-bold text-foreground">V</span>
           <span
             aria-hidden
             className="
-              pointer-events-none absolute -inset-2 rounded-3xl blur-2xl opacity-50
-              bg-gradient-to-br from-brand-cyan to-brand-purple
+              pointer-events-none absolute -inset-2 rounded-3xl blur-2xl opacity-20
+              bg-white/5
             "
           />
         </motion.div>
@@ -169,26 +178,35 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
                   href={s.href}
                   data-suggestion-kind="navigate"
                   className={cn(
-                    "group relative flex items-start gap-3 rounded-2xl p-4 text-left",
-                    "bg-white/[0.03] backdrop-blur-xl",
-                    "border border-white/[0.06]",
-                    "transition-[border-color,box-shadow] duration-200",
-                    "hover:border-brand-cyan/25 hover:shadow-[0_0_30px_-12px_rgba(56,189,248,0.5)]",
+                    "visora-card visora-card-interactive group relative flex items-start gap-3 p-4 text-left",
+                    "hover:shadow-[0_0_30px_-12px_rgba(0,0,0,0.4)]",
                   )}
                 >
                   <SuggestionCardBody Icon={s.icon} title={s.title} prompt={s.prompt} />
                 </Link>
+              ) : s.kind === "demo" ? (
+                <button
+                  type="button"
+                  onClick={() => onTryDemo?.()}
+                  data-suggestion-kind="demo"
+                  className={cn(
+                    "group relative flex w-full items-start gap-3 rounded-2xl p-4 text-left",
+                    "bg-white/[0.03] backdrop-blur-xl",
+                    "border border-muted/20",
+                    "transition-[border-color,box-shadow] duration-200",
+                    "hover:border-muted/40 hover:shadow-[0_0_30px_-12px_rgba(0,0,0,0.4)]",
+                  )}
+                >
+                  <SuggestionCardBody Icon={s.icon} title={s.title} prompt={s.prompt} />
+                </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => onPickSuggestion(s.prompt)}
                   data-suggestion-kind="send"
                   className={cn(
-                    "group relative flex w-full items-start gap-3 rounded-2xl p-4 text-left",
-                    "bg-white/[0.03] backdrop-blur-xl",
-                    "border border-white/[0.06]",
-                    "transition-[border-color,box-shadow] duration-200",
-                    "hover:border-brand-cyan/25 hover:shadow-[0_0_30px_-12px_rgba(56,189,248,0.5)]",
+                    "visora-card visora-card-interactive group relative flex w-full items-start gap-3 p-4 text-left",
+                    "hover:shadow-[0_0_30px_-12px_rgba(0,0,0,0.4)]",
                   )}
                 >
                   <SuggestionCardBody Icon={s.icon} title={s.title} prompt={s.prompt} />

@@ -39,7 +39,13 @@ import type {
   Widget,
 } from "@/types/visora";
 
-import { DEMO_PROJECT } from "./demoData";
+import { DEMO_URBAN_BREW } from "./demoData";
+import { sanitizeErrorMessage } from "./sanitizeError";
+
+function safeErr(err: unknown): string {
+  const raw = err instanceof Error ? err.message : String(err);
+  return sanitizeErrorMessage(raw);
+}
 
 /* ─────────────────────────────────────────────────────────────
    Public types
@@ -48,6 +54,10 @@ import { DEMO_PROJECT } from "./demoData";
 export interface ChatEngineOptions {
   /** Called for each assistant message as it's produced. */
   onMessage?: (msg: ChatMessage) => void;
+  /** Called when a streamed assistant message begins (empty content). */
+  onStreamStart?: (msg: ChatMessage) => void;
+  /** Called as streamed tokens arrive (display-safe text, widgets stripped). */
+  onStreamDelta?: (messageId: string, content: string) => void;
   /** Called whenever the engine learns something about the project. */
   onProjectUpdate?: (patch: Partial<Project>) => void;
   /** Override fetch (handy for tests). */
@@ -171,7 +181,11 @@ function detectIntent(
   const text = message.trim();
   const lower = text.toLowerCase();
 
-  if (/\b(demo|show me a demo|sample|example)\b/.test(lower)) {
+  if (
+    /\b(try demo|show me a demo|see a demo|demo mode|urban brew|sample demo|example demo)\b/.test(
+      lower,
+    )
+  ) {
     return { kind: "demo" };
   }
 
@@ -462,6 +476,55 @@ const DEMO_PACE_MS = 700;
 
 /* ── Demo ────────────────────────────────────────────────────── */
 
+/** Assistant messages for the Urban Brew Ceylon walkthrough (no user turn). */
+export function buildUrbanBrewDemoMessages(): ChatMessage[] {
+  const d = DEMO_URBAN_BREW;
+  return [
+    makeAssistantMessage(
+      "Sure — here's our hero demo, **Urban Brew Ceylon**: a premium coffee brand for young professionals in Colombo. Everything below works offline — no API keys required.",
+    ),
+    makeAssistantMessage("Brand brain — name, tagline, story, palette:", [
+      { type: "brand_card", data: d.brandResult },
+    ]),
+    makeAssistantMessage(
+      `Trust audit — ${d.trustScore.overallScore}/100 across ${d.trustScore.categories.length} categories:`,
+      [{ type: "trust_score", data: d.trustScore }],
+    ),
+    makeAssistantMessage("Four launch-ready visuals (demo placeholders):", [
+      { type: "image_grid", data: { assets: d.visuals } },
+    ]),
+    makeAssistantMessage("Here's the website concept:", [
+      { type: "website_preview", data: d.websiteConcept },
+    ]),
+    makeAssistantMessage("And the marketing pack — IG, TikTok, WhatsApp, email, ads:", [
+      { type: "marketing_pack", data: d.marketingPack },
+    ]),
+    makeAssistantMessage(
+      "Explore the gallery for **EcoSip Lanka** and **GlowNest** demos too. Want to try a live 3D forge or save this as a starting point?",
+      [postBrandActions()],
+    ),
+  ];
+}
+
+/**
+ * Full instant demo conversation for "Try Demo" — all widgets at once.
+ */
+export function createInstantDemoConversation(): {
+  messages: ChatMessage[];
+  project: Project;
+} {
+  const userMsg: ChatMessage = {
+    id: makeId(),
+    role: "user",
+    content: "Try Demo",
+    timestamp: new Date().toISOString(),
+  };
+  return {
+    messages: [userMsg, ...buildUrbanBrewDemoMessages()],
+    project: { ...DEMO_URBAN_BREW },
+  };
+}
+
 async function handleDemo(ctx: HandlerCtx): Promise<ChatMessage[]> {
   const messages: ChatMessage[] = [];
   const push = (m: ChatMessage) => {
@@ -469,59 +532,13 @@ async function handleDemo(ctx: HandlerCtx): Promise<ChatMessage[]> {
     ctx.yield_(m);
   };
 
-  // Patch the entire demo project up front so the right-panel /
-  // session title pick up the brand name immediately.
-  ctx.patch(DEMO_PROJECT);
+  ctx.patch({ ...DEMO_URBAN_BREW });
 
-  push(
-    makeAssistantMessage(
-      "Sure — here's our hero demo, **Urban Brew Ceylon**: a premium small-batch coffee brand for design-led offices in Colombo. Walking you through what we generated.",
-    ),
-  );
-  await delay(DEMO_PACE_MS);
-
-  push(
-    makeAssistantMessage("Brand brain — name, tagline, story, palette:", [
-      { type: "brand_card", data: DEMO_PROJECT.brandResult },
-    ]),
-  );
-  await delay(DEMO_PACE_MS);
-
-  push(
-    makeAssistantMessage(
-      `Trust audit — ${DEMO_PROJECT.trustScore.overallScore}/100 across ${DEMO_PROJECT.trustScore.categories.length} categories:`,
-      [{ type: "trust_score", data: DEMO_PROJECT.trustScore }],
-    ),
-  );
-  await delay(DEMO_PACE_MS);
-
-  push(
-    makeAssistantMessage("Four launch-ready visuals from fal.ai:", [
-      { type: "image_grid", data: { assets: DEMO_PROJECT.visuals } },
-    ]),
-  );
-  await delay(DEMO_PACE_MS);
-
-  push(
-    makeAssistantMessage("Here's the website concept:", [
-      { type: "website_preview", data: DEMO_PROJECT.websiteConcept },
-    ]),
-  );
-  await delay(DEMO_PACE_MS);
-
-  push(
-    makeAssistantMessage("And the marketing pack — IG, TikTok, WhatsApp, email, ads:", [
-      { type: "marketing_pack", data: DEMO_PROJECT.marketingPack },
-    ]),
-  );
-  await delay(DEMO_PACE_MS);
-
-  push(
-    makeAssistantMessage(
-      "Want me to spin up a real 3D model from the product mockup? Or save this demo as a starting point?",
-      [postBrandActions()],
-    ),
-  );
+  const steps = buildUrbanBrewDemoMessages();
+  for (let i = 0; i < steps.length; i++) {
+    push(steps[i]!);
+    if (i < steps.length - 1) await delay(DEMO_PACE_MS);
+  }
 
   return messages;
 }
@@ -697,10 +714,9 @@ async function runBrandPipeline(
       ),
     );
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     push(
       makeAssistantMessage(
-        `Visual generation hiccupped (${msg}). I'll keep going — you can regenerate them anytime.`,
+        `Visual generation hiccupped (${safeErr(err)}). I'll keep going — you can regenerate them anytime.`,
       ),
     );
   }
@@ -781,12 +797,11 @@ async function handle3D(
       ctx.options,
     );
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     const failed: Model3D = { ...loadingModel, status: "fallback" };
     ctx.patch({ model3d: failed });
     push(
       makeAssistantMessage(
-        `3D generation failed (${msg}). You can retry — the brand and visuals are still saved.`,
+        `3D generation failed (${safeErr(err)}). You can retry — the brand and visuals are still saved.`,
         [{ type: "model_3d", data: failed }],
       ),
     );
@@ -805,7 +820,7 @@ async function handle3D(
     makeAssistantMessage(
       response.status === "generated"
         ? `3D mesh ready in ${(response.durationMs / 1000).toFixed(1)} s. Click "Open 3D Studio" to inspect.`
-        : `3D generation fell back: ${response.error ?? "unknown reason"}. You can retry or download the source image.`,
+        : `3D generation fell back: ${sanitizeErrorMessage(response.error ?? "unknown reason")}. You can retry or download the source image.`,
       [{ type: "model_3d", data: finalModel }],
     ),
   );
@@ -886,10 +901,9 @@ async function handleRegenVisual(
       ctx.options,
     );
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     push(
       makeAssistantMessage(
-        `Couldn't regenerate that visual (${msg}). Try once more or refine the prompt.`,
+        `Couldn't regenerate that visual (${safeErr(err)}). Try once more or refine the prompt.`,
       ),
     );
     return messages;
@@ -1032,10 +1046,9 @@ async function handleSave(
       );
     }
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     push(
       makeAssistantMessage(
-        `Couldn't save right now (${msg}). The project is still in this session.`,
+        `Couldn't save right now (${safeErr(err)}). The project is still in this session.`,
       ),
     );
   }
@@ -1121,9 +1134,8 @@ export async function processUserMessage(
         return handleGeneral(intent.text, currentProject, ctx);
     }
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     const fallback = makeAssistantMessage(
-      `Something unexpected happened (${msg}). Try again, or say "show me a demo".`,
+      `Something unexpected happened (${safeErr(err)}). Try again, or say "show me a demo".`,
     );
     yield_(fallback);
     return [fallback];

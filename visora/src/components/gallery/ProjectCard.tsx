@@ -61,18 +61,15 @@ export function ProjectCard({
   const has3D = Boolean(model3d?.modelUrl || model3d?.id);
   const dateLabel = formatDate(createdAt);
 
-  const href = `/gallery/${encodeURIComponent(id)}`;
+  const href = `/project/${encodeURIComponent(id)}`;
 
   return (
     <motion.article
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 320, damping: 28 }}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl",
-        "border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl",
+        "visora-card visora-gallery-card group relative flex flex-col overflow-hidden",
         "shadow-[0_4px_24px_-12px_rgba(0,0,0,0.4)]",
-        "transition-shadow duration-300 hover:shadow-[0_18px_48px_-18px_rgba(56,189,248,0.25)]",
-        "hover:border-brand-cyan/25",
         className,
       )}
     >
@@ -96,7 +93,7 @@ export function ProjectCard({
         {/* Demo / input-type badge — top-left */}
         <div className="absolute left-3 top-3 flex gap-2">
           {isDemo ? (
-            <Pill className="border-brand-cyan/30 bg-brand-cyan/15 text-brand-cyan">
+            <Pill className="border-[#4F5052]/30 bg-white/[0.06] text-foreground">
               <Sparkles className="h-3 w-3" />
               Demo
             </Pill>
@@ -135,7 +132,7 @@ export function ProjectCard({
 
           {has3D ? (
             <span
-              className="inline-flex items-center gap-1 rounded-full border border-brand-purple/30 bg-brand-purple/15 px-2.5 py-1 text-[11px] font-semibold text-brand-purple"
+              className="inline-flex items-center gap-1 rounded-full border border-[#4F5052]/30 bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-muted"
               title="Has a 3D model attached"
             >
               <Box className="h-3 w-3" />
@@ -152,8 +149,8 @@ export function ProjectCard({
           className={cn(
             "mt-auto inline-flex w-full items-center justify-center gap-1.5 rounded-xl",
             "border border-white/10 bg-white/[0.02] px-4 py-2.5 text-sm font-medium text-foreground",
-            "transition-colors duration-200 hover:border-brand-cyan/40 hover:bg-brand-cyan/5 hover:text-brand-cyan",
-            "focus:outline-none focus:ring-2 focus:ring-brand-cyan/40",
+            "transition-colors duration-200 hover:border-[#4F5052]/30 hover:bg-white/[0.03] hover:text-foreground",
+            "focus:outline-none focus:ring-2 focus:ring-[#4F5052]/30",
           )}
           aria-label={`Open project ${brandResult.brandName}`}
         >
@@ -201,17 +198,17 @@ function scoreTone(score: number): ScoreTone {
   if (score >= 70) {
     return {
       classes:
-        "border-state-success/30 bg-state-success/15 text-state-success",
+        "border-foreground/30 bg-foreground/15 text-foreground",
     };
   }
   if (score >= 40) {
     return {
       classes:
-        "border-state-warning/30 bg-state-warning/15 text-state-warning",
+        "border-hint/30 bg-hint/15 text-hint",
     };
   }
   return {
-    classes: "border-state-danger/30 bg-state-danger/15 text-state-danger",
+    classes: "border-disabled/30 bg-disabled/15 text-muted",
   };
 }
 
@@ -246,14 +243,14 @@ function GradientPlaceholder({ palette }: { palette: string[] }) {
   const safe = (palette ?? []).filter(
     (c) => typeof c === "string" && /^#[0-9a-f]{3,8}$/i.test(c),
   );
-  const a = safe[0] ?? "#0F172A";
-  const b = safe[2] ?? "#38BDF8";
-  const c = safe[3] ?? "#A855F7";
+  const a = safe[0] ?? "#0D0E10";
+  const b = safe[2] ?? "#F8FAFA";
+  const c = safe[3] ?? "#818283";
   return (
     <div
       className="absolute inset-0"
       style={{
-        background: `radial-gradient(120% 120% at 0% 0%, ${a} 0%, transparent 60%), radial-gradient(120% 120% at 100% 0%, ${b}33 0%, transparent 55%), radial-gradient(120% 120% at 100% 100%, ${c}33 0%, transparent 55%), #0a0f1e`,
+        background: `radial-gradient(120% 120% at 0% 0%, ${a} 0%, transparent 60%), radial-gradient(120% 120% at 100% 0%, ${b}33 0%, transparent 55%), radial-gradient(120% 120% at 100% 100%, ${c}33 0%, transparent 55%), #0D0E10`,
       }}
       aria-hidden
     />

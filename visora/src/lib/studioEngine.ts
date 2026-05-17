@@ -22,6 +22,8 @@
  * UI can append messages as they're produced.
  */
 
+import { sanitizeErrorMessage } from "./sanitizeError";
+
 import type {
   ChatAttachment,
   ChatMessage,
@@ -213,7 +215,9 @@ async function handleImageTo3D(
   try {
     response = await callGenerate3D({ mode: "image_to_3d", imageUrl }, ctx.options);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const msg = sanitizeErrorMessage(
+      err instanceof Error ? err.message : String(err),
+    );
     const failed: Model3D = { ...loading, status: "fallback" };
     ctx.patch({ model3d: failed });
     push(
@@ -237,7 +241,7 @@ async function handleImageTo3D(
     makeAssistantMessage(
       response.status === "generated"
         ? `3D mesh ready in ${(response.durationMs / 1000).toFixed(1)} s. Inspect it in the viewer →`
-        : `3D generation fell back: ${response.error ?? "unknown reason"}. The viewer shows the wireframe placeholder; you can retry with another image.`,
+        : `3D generation fell back: ${sanitizeErrorMessage(response.error ?? "unknown reason")}. The viewer shows the wireframe placeholder; you can retry with another image.`,
       [{ type: "model_3d", data: final }],
     ),
   );
@@ -275,7 +279,9 @@ async function handleTextTo3D(
   try {
     response = await callGenerate3D({ mode: "text_to_3d", prompt }, ctx.options);
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const msg = sanitizeErrorMessage(
+      err instanceof Error ? err.message : String(err),
+    );
     const failed: Model3D = { ...loading, status: "fallback" };
     ctx.patch({ model3d: failed });
     push(
@@ -299,7 +305,7 @@ async function handleTextTo3D(
     makeAssistantMessage(
       response.status === "generated"
         ? `Mesh ready in ${(response.durationMs / 1000).toFixed(1)} s. Source image and 3D model are both in the viewer →`
-        : `3D generation fell back: ${response.error ?? "unknown reason"}. Try uploading a clean reference image instead.`,
+        : `3D generation fell back: ${sanitizeErrorMessage(response.error ?? "unknown reason")}. Try uploading a clean reference image instead.`,
       [{ type: "model_3d", data: final }],
     ),
   );
@@ -360,7 +366,9 @@ export async function processStudioMessage(
         return handleStudioGeneral(ctx);
     }
   } catch (err) {
-    const m = err instanceof Error ? err.message : String(err);
+    const m = sanitizeErrorMessage(
+      err instanceof Error ? err.message : String(err),
+    );
     const fallback = makeAssistantMessage(
       `Studio engine hit an unexpected error (${m}). Try again, or describe a different product.`,
     );

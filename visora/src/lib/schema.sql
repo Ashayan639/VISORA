@@ -34,8 +34,15 @@ create table if not exists projects (
   brand_result    jsonb,
   trust_score     jsonb,
   website_concept jsonb,
-  marketing_pack  jsonb
+  marketing_pack  jsonb,
+  -- Conversation snapshot for resume-from-gallery (optional).
+  chat_messages   jsonb,
+  session_id        text
 );
+
+-- Safe migration for existing Supabase projects (re-run in SQL Editor):
+alter table projects add column if not exists chat_messages jsonb;
+alter table projects add column if not exists session_id text;
 
 create table if not exists visuals (
   id                uuid primary key default gen_random_uuid(),

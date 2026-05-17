@@ -27,11 +27,12 @@
 import { NextResponse } from "next/server";
 
 import {
-  PLACEHOLDER_VISUAL_URL,
   generateOneVisual,
+  placeholderUrlForVisual,
   type GenerateVisualInput,
   type VisualResult,
 } from "@/lib/fal-generation";
+import { sanitizeErrorMessage } from "@/lib/sanitizeError";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -158,12 +159,12 @@ function settledToResult(
   });
 
   return {
-    imageUrl: PLACEHOLDER_VISUAL_URL,
+    imageUrl: placeholderUrlForVisual(input.visualType, input.title),
     visualType: input.visualType,
     prompt: input.prompt,
     status: "fallback",
     title: input.title,
-    error: message,
+    error: sanitizeErrorMessage(message),
     durationMs: 0,
   };
 }
@@ -175,47 +176,68 @@ function settledToResult(
 export async function POST(req: Request): Promise<NextResponse> {
   const startedAt = Date.now();
 
-  let body: unknown;
   try {
-    body = await req.json();
-  } catch {
-    return withCors(
-      NextResponse.json({ error: "Invalid JSON body." }, { status: 400 }),
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return withCors(
+        NextResponse.json({ error: "Invalid JSON body." }, { status: 400 }),
+      );
+    }
+
+    const parsed = parseBody(body);
+    if (!parsed.ok) {
+      return withCors(
+        NextResponse.json({ error: parsed.message }, { status: 400 }),
+      );
+    }
+
+    // Fan out — Promise.allSettled means a single rejection doesn't take
+    // down the whole batch.
+    const settled = await Promise.allSettled(
+      parsed.prompts.map((p) => generateOneVisual(p)),
     );
-  }
 
-  const parsed = parseBody(body);
-  if (!parsed.ok) {
-    return withCors(
-      NextResponse.json({ error: parsed.message }, { status: 400 }),
+    const results = settled.map((s, i) =>
+      settledToResult(s, parsed.prompts[i]!),
     );
-  }
 
-  // Fan out — Promise.allSettled means a single rejection doesn't take
-  // down the whole batch.
-  const settled = await Promise.allSettled(
-    parsed.prompts.map((p) => generateOneVisual(p)),
-  );
+    const generated = results.filter((r) => r.status === "generated").length;
+    const fallback = results.length - generated;
 
-  const results = settled.map((s, i) =>
-    settledToResult(s, parsed.prompts[i]!),
-  );
-
-  const generated = results.filter((r) => r.status === "generated").length;
-  const fallback = results.length - generated;
-
-  return withCors(
-    NextResponse.json(
-      {
-        results,
-        summary: {
-          total: results.length,
-          generated,
-          fallback,
-          durationMs: Date.now() - startedAt,
+    return withCors(
+      NextResponse.json(
+        {
+          results,
+          summary: {
+            total: results.length,
+            generated,
+            fallback,
+            durationMs: Date.now() - startedAt,
+          },
         },
-      },
-      { status: 200 },
-    ),
-  );
+        { status: 200 },
+      ),
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[api/generate-all-visuals] unexpected error:", message);
+
+    return withCors(
+      NextResponse.json(
+        {
+          results: [],
+          summary: {
+            total: 0,
+            generated: 0,
+            fallback: 0,
+            durationMs: Date.now() - startedAt,
+          },
+          error: sanitizeErrorMessage(message),
+        },
+        { status: 500 },
+      ),
+    );
+  }
 }

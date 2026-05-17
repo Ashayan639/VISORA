@@ -9,7 +9,11 @@
  * called on the server (no `window`).
  */
 
-import type { Project } from "@/types/visora";
+import type { ChatMessage, Project } from "@/types/visora";
+import {
+  loadGalleryProjectChat,
+  saveGalleryProjectChat,
+} from "@/lib/sessions";
 
 const PROJECTS_KEY = "trustforge_projects";
 
@@ -84,7 +88,28 @@ export function saveLocalProject(project: Project): Project {
   if (next.length > 50) next.length = 50;
 
   writeJSON(PROJECTS_KEY, next);
+
+  if (safe.chatMessages?.length) {
+    saveGalleryProjectChat(safe.id, safe.chatMessages);
+  }
+
   return safe;
+}
+
+/** Load project + optional stored chat transcript. */
+export function getLocalProjectById(id: string): Project | null {
+  const p = getLocalProjects().find((x) => x.id === id);
+  if (!p) return null;
+  const chat = loadGalleryProjectChat(id);
+  return chat.length > 0 ? { ...p, chatMessages: chat } : p;
+}
+
+/** Save project with chat messages for gallery + resume. */
+export function saveLocalProjectWithChat(
+  project: Project,
+  chatMessages: ChatMessage[],
+): Project {
+  return saveLocalProject({ ...project, chatMessages });
 }
 
 /** Remove a locally-saved project by id. Returns `true` if it existed. */

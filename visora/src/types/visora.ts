@@ -40,7 +40,7 @@ export interface BrandResult {
   usp: string;
   story: string;
   promise: string;
-  /** Hex color strings, e.g. ["#020617", "#38BDF8"]. */
+  /** Hex color strings, e.g. ["#020617", "#F8FAFA"]. */
   colorPalette: string[];
   painPoints: string[];
 }
@@ -155,6 +155,10 @@ export interface Project {
   model3d?: Model3D;
   websiteConcept: WebsiteConcept;
   marketingPack: MarketingPack;
+  /** Full chat transcript when saved from the workspace. */
+  chatMessages?: ChatMessage[];
+  /** Originating local session id (for resume). */
+  sessionId?: string;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -228,4 +232,11 @@ export interface Widget {
   type: WidgetType;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
+  /** Character offset in `ChatMessage.content` where this widget renders inline. */
+  position?: number;
+  /**
+   * Monotonic version for this widget type in the session (1 = first).
+   * Shown as "v2", "v3" in the UI when &gt; 1.
+   */
+  version?: number;
 }

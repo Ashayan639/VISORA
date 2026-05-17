@@ -3,6 +3,7 @@ import { getServerSupabase, supabase } from "./supabase";
 import type {
   AssetStatus,
   BrandResult,
+  ChatMessage,
   InputType,
   MarketingPack,
   Model3D,
@@ -62,6 +63,8 @@ interface ProjectRow {
   trust_score: TrustScore | null;
   website_concept: WebsiteConcept | null;
   marketing_pack: MarketingPack | null;
+  chat_messages: ChatMessage[] | null;
+  session_id: string | null;
 }
 
 interface VisualRow {
@@ -193,6 +196,8 @@ function rowToProject(
     marketingPack: row.marketing_pack ?? EMPTY_MARKETING,
     visuals: resolvedVisuals,
     model3d: resolvedModel3d,
+    chatMessages: Array.isArray(row.chat_messages) ? row.chat_messages : undefined,
+    sessionId: row.session_id ?? undefined,
   };
 }
 
@@ -212,6 +217,8 @@ function projectToRow(project: Project): Partial<ProjectRow> {
     trust_score: project.trustScore,
     website_concept: project.websiteConcept,
     marketing_pack: project.marketingPack,
+    chat_messages: project.chatMessages?.length ? project.chatMessages : null,
+    session_id: project.sessionId ?? null,
   };
   if (project.id) row.id = project.id;
   if (project.createdAt) row.created_at = project.createdAt;

@@ -13,8 +13,8 @@ interface SolutionMode {
   subtitle: string;
   steps: string[];
   cta: { label: string; href: string };
-  /** Tailwind classes for the icon tile + accent border glow. */
-  accent: "cyan" | "purple";
+  /** Slight visual emphasis for the second mode card. */
+  emphasis?: boolean;
 }
 
 const MODES: SolutionMode[] = [
@@ -29,7 +29,6 @@ const MODES: SolutionMode[] = [
       "A 3D product model spins it into reality",
     ],
     cta: { label: "Start from an idea", href: "/generate?mode=idea" },
-    accent: "cyan",
   },
   {
     icon: Globe,
@@ -42,7 +41,7 @@ const MODES: SolutionMode[] = [
       "Get a Trust Score plus a refreshed launch pack",
     ],
     cta: { label: "Refresh a URL", href: "/generate?mode=url" },
-    accent: "purple",
+    emphasis: true,
   },
 ];
 
@@ -55,23 +54,7 @@ function ModeCard({
   fromX: number;
   delay: number;
 }) {
-  const { icon: Icon, title, subtitle, steps, cta, accent } = mode;
-  const accentClasses = {
-    cyan: {
-      iconBg: "bg-brand-cyan/10 text-brand-cyan ring-brand-cyan/30",
-      stepDot: "bg-brand-cyan",
-      ctaBg: "from-brand-cyan to-brand-purple",
-      hoverGlow:
-        "hover:border-brand-cyan/30 hover:shadow-[0_0_60px_-12px_rgba(56,189,248,0.35)]",
-    },
-    purple: {
-      iconBg: "bg-brand-purple/10 text-brand-purple ring-brand-purple/30",
-      stepDot: "bg-brand-purple",
-      ctaBg: "from-brand-purple to-brand-cyan",
-      hoverGlow:
-        "hover:border-brand-purple/30 hover:shadow-[0_0_60px_-12px_rgba(168,85,247,0.35)]",
-    },
-  }[accent];
+  const { icon: Icon, title, subtitle, steps, cta, emphasis } = mode;
 
   return (
     <motion.div
@@ -81,35 +64,49 @@ function ModeCard({
       transition={{ duration: 0.7, delay, ease: "easeOut" }}
       className={cn(
         "relative flex flex-col gap-6 rounded-3xl p-8 sm:p-10",
-        "bg-white/[0.03] backdrop-blur-xl",
-        "border border-white/[0.06]",
-        "transition-[border-color,box-shadow] duration-300",
-        accentClasses.hoverGlow,
+        "bg-card border border-[#4F5052]/30",
+        "transition-[border-color,box-shadow,background-color] duration-300",
+        "hover:bg-card-hover hover:border-[#818283]/50",
+        "hover:shadow-[0_0_60px_-12px_rgba(255,255,255,0.08)]",
+        emphasis && "border-[#818283]/40",
       )}
     >
-      <div className="flex items-start gap-4">
-        <div
-          className={cn(
-            "inline-flex h-12 w-12 items-center justify-center rounded-xl ring-1",
-            accentClasses.iconBg,
-          )}
+      <motion.div
+        className="flex items-start gap-4"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: delay + 0.05 }}
+      >
+        <motion.div
+          className="
+            inline-flex h-12 w-12 items-center justify-center rounded-xl ring-1
+            bg-white/[0.04] text-foreground ring-[#4F5052]/30
+          "
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <Icon size={26} strokeWidth={1.75} />
-        </div>
-        <div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -8 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: delay + 0.1 }}
+        >
           <h3 className="text-2xl font-semibold text-foreground">{title}</h3>
           <p className="mt-1 text-sm text-muted">{subtitle}</p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <ol className="flex flex-col gap-3">
         {steps.map((step, i) => (
           <li key={step} className="flex items-start gap-3 text-sm text-muted">
             <span
-              className={cn(
-                "mt-1.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
-                accentClasses.stepDot,
-              )}
+              className="
+                mt-1.5 inline-flex h-5 w-5 shrink-0 items-center justify-center
+                rounded-full bg-foreground text-[10px] font-bold text-background
+              "
             >
               {i + 1}
             </span>
@@ -120,12 +117,11 @@ function ModeCard({
 
       <Link
         href={cta.href}
-        className={cn(
-          "group/cta mt-2 inline-flex items-center gap-2 self-start rounded-full px-5 py-2.5 text-sm font-semibold text-white",
-          "bg-gradient-to-r shadow-md shadow-brand-cyan/15",
-          "transition-all duration-200 hover:scale-105",
-          accentClasses.ctaBg,
-        )}
+        className="
+          group/cta mt-2 inline-flex items-center gap-2 self-start rounded-full px-5 py-2.5
+          text-sm font-semibold bg-foreground text-background shadow-md shadow-black/25
+          transition-all duration-200 hover:scale-105 hover:bg-foreground/90
+        "
       >
         {cta.label}
         <ArrowRight
@@ -140,7 +136,13 @@ function ModeCard({
 export function SolutionSection() {
   return (
     <section className="relative w-full py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
+      <motion.div
+        className="mx-auto max-w-7xl px-6 md:px-12"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <SectionHeading
           title="Two Paths to Visual Reality"
           subtitle="Whether you have a napkin sketch or a live site, VISORA meets you where you are."
@@ -150,7 +152,7 @@ export function SolutionSection() {
           <ModeCard mode={MODES[0]} fromX={-40} delay={0} />
           <ModeCard mode={MODES[1]} fromX={40} delay={0.1} />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
