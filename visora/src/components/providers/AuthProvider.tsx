@@ -60,12 +60,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data: { session: initial } }) => {
-      if (!mounted) return;
-      setSession(initial);
-      setUser(initial?.user ?? null);
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session: initial } }) => {
+        if (!mounted) return;
+        setSession(initial);
+        setUser(initial?.user ?? null);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setSession(null);
+        setUser(null);
+        setLoading(false);
+      });
 
     const {
       data: { subscription },
