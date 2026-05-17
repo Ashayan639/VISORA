@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  // Monorepo: app lives in visora/; dependencies install here on Vercel.
+  outputFileTracingRoot: path.join(__dirname),
   images: {
     remotePatterns: [
       // Google account profile pictures (NextAuth Google provider).

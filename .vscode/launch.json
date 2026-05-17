@@ -2,28 +2,48 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
+      "type": "node-terminal",
       "request": "launch",
-      "name": "VISORA: Chrome (Next.js dev)",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/visora"
+      "name": "VISORA: Dev server",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/visora"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "VISORA: Next.js server",
+      "name": "VISORA: Dev server (inspect)",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "dev:debug"],
       "cwd": "${workspaceFolder}/visora",
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "VISORA: Attach to Node (9229)",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "VISORA: Chrome (client)",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/visora"
     }
   ],
   "compounds": [
     {
-      "name": "VISORA: Full stack",
-      "configurations": ["VISORA: Next.js server", "VISORA: Chrome (Next.js dev)"],
-      "stopAll": true
+      "name": "VISORA: Full stack debug",
+      "configurations": [
+        "VISORA: Dev server (inspect)",
+        "VISORA: Chrome (client)"
+      ],
+      "stopAll": true,
+      "presentation": {
+        "order": 1
+      }
     }
   ]
 }

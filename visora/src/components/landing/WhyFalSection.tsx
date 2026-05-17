@@ -57,7 +57,7 @@ function VisualTileInner({ card }: { card: VisualCard }) {
       initial={{ y: 20, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.5, delay, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       whileHover={{ y: -2 }}
       className={cn(
         "group relative overflow-hidden rounded-2xl p-6",
@@ -93,7 +93,7 @@ function VisualTileInner({ card }: { card: VisualCard }) {
           </span>
         ) : null}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

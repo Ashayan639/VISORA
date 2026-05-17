@@ -11,7 +11,7 @@ import { MarketingPackWidget } from "@/components/chat/widgets/MarketingPackWidg
 import { Model3DPreview } from "@/components/chat/widgets/Model3DPreview";
 import { TrustScoreWidget } from "@/components/chat/widgets/TrustScoreWidget";
 import { WebsitePreviewWidget } from "@/components/chat/widgets/WebsitePreviewWidget";
-import { findDemoProject } from "@/lib/demoData";
+import { findDemoProject, resolveProjectIdParam } from "@/lib/demoData";
 import { getLocalProjects } from "@/lib/galleryStorage";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/visora";

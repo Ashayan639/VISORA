@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { ChatMessage, Widget } from "@/types/visora";
+import { cn } from "@/lib/utils";
 
 import type { ChatAction } from "./widgets/ActionButtons";
 import { WidgetRenderer } from "./widgets/WidgetRenderer";

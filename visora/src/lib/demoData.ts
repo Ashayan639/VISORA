@@ -47,25 +47,6 @@ export const DEMO_PROJECT_IDS = new Set([
   "demo-glownest",
 ]);
 
-/** Friendly aliases for docs / smoke tests (e.g. `/project/demo-1`). */
-const DEMO_ID_ALIASES: Record<string, string> = {
-  "demo-1": "demo-urban-brew-ceylon",
-};
-
-export function resolveDemoProjectId(id: string): string {
-  return DEMO_ID_ALIASES[id] ?? id;
-}
-
-export function findDemoProject(id: string): Project | undefined {
-  const resolved = resolveDemoProjectId(id);
-  return DEMO_PROJECTS.find((p) => p.id === resolved);
-}
-
-export function isDemoProjectId(id: string): boolean {
-  if (id in DEMO_ID_ALIASES) return true;
-  return DEMO_PROJECT_IDS.has(id);
-}
-
 /* ─────────────────────────────────────────────────────────────
    Demo 1 — Urban Brew Ceylon
    ───────────────────────────────────────────────────────────── */
@@ -104,6 +85,21 @@ export function resolveProjectIdParam(rawId: string): string {
   if (!id) return "";
   const alias = DEMO_ID_ALIASES[id.toLowerCase()];
   return alias ?? id;
+}
+
+/** @deprecated Prefer `resolveProjectIdParam` — same behavior. */
+export function resolveDemoProjectId(id: string): string {
+  return resolveProjectIdParam(id);
+}
+
+export function findDemoProject(id: string): Project | undefined {
+  const resolved = resolveProjectIdParam(id);
+  return DEMO_PROJECTS.find((p) => p.id === resolved);
+}
+
+export function isDemoProjectId(id: string): boolean {
+  if (id.toLowerCase() in DEMO_ID_ALIASES) return true;
+  return DEMO_PROJECT_IDS.has(id);
 }
 
 const URBAN_BREW_PALETTE = [

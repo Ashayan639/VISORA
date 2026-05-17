@@ -136,7 +136,8 @@ export function mapAuthUser(user: User | null) {
   };
 }
 
-/** NextAuth provider ids currently enabled (e.g. `google`, `github`). */
+/** OAuth provider ids available when Supabase auth is configured. */
 export function getEnabledAuthProviderIds(): string[] {
-  return authOptions.providers.map((p) => p.id);
+  if (!supabase) return [];
+  return ["google"];
 }
