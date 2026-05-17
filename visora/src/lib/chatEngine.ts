@@ -280,16 +280,6 @@ function makeAssistantMessage(
   };
 }
 
-/**
- * Convenience wrapper for the demo flow — stamps every assistant
- * message with `meta.isDemo: true` so the chat UI can render a
- * "Demo Mode" badge and judges always know when they're looking at
- * canned demo content rather than a live model round-trip.
- */
-function makeDemoMessage(content: string, widgets: Widget[] = []): ChatMessage {
-  return makeAssistantMessage(content, widgets, { isDemo: true });
-}
-
 async function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

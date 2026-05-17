@@ -1,11 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import type { ChatMessage, Widget } from "@/types/visora";
-import { cn } from "@/lib/utils";
 
 import type { ChatAction } from "./widgets/ActionButtons";
 import { WidgetRenderer } from "./widgets/WidgetRenderer";
@@ -142,77 +140,6 @@ function VisoraAvatar() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Generating / pipeline visuals (presentation-only rotation)
-   ───────────────────────────────────────────────────────────── */
-
-function BrandSkeletonMock() {
-  return (
-    <div className="flex gap-2" aria-hidden>
-      {[0, 1].map((i) => (
-        <div
-          key={i}
-          className="h-14 flex-1 overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.04]"
-        >
-          <div className="h-full w-full visora-shimmer-bg opacity-80" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ImageShimmerMock() {
-  return (
-    <div
-      className="h-20 overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.05]"
-      aria-hidden
-    >
-      <div className="h-full w-full bg-gradient-to-r from-brand-cyan/10 via-brand-purple/15 to-brand-cyan/10 visora-shimmer-bg" />
-    </div>
-  );
-}
-
-function WireframeCubeMock() {
-  return (
-    <div className="flex justify-center py-1" aria-hidden>
-      <svg
-        viewBox="0 0 64 64"
-        className="h-14 w-14 text-brand-cyan animate-visora-cube-spin [animation-duration:10s]"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        style={{ opacity: 0.75 }}
-      >
-        <path d="M32 8 L54 22 L54 42 L32 56 L10 42 L10 22 Z" opacity="0.9" />
-        <path d="M32 8 L32 56 M10 22 L54 22 M10 42 L54 42" opacity="0.5" />
-      </svg>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Demo-mode pill — rendered above the bubble body whenever an
-   assistant message was emitted by the chat engine's demo flow.
-   Tiny purple capsule so judges instantly know the content is
-   the canned hackathon demo, not a live model round-trip.
-   ───────────────────────────────────────────────────────────── */
-
-function DemoBadge() {
-  return (
-    <span
-      className={cn(
-        "inline-flex w-fit items-center gap-1 rounded-full",
-        "border border-brand-purple/35 bg-brand-purple/15 px-2 py-0.5",
-        "text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-purple",
-        "backdrop-blur-md shadow-[0_0_18px_-6px_rgba(168,85,247,0.45)]",
-      )}
-    >
-      <Sparkles className="h-2.5 w-2.5" aria-hidden />
-      Demo Mode
-    </span>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
    MessageBubble
    ───────────────────────────────────────────────────────────── */
 
@@ -338,15 +265,6 @@ export function MessageBubble({
    ───────────────────────────────────────────────────────────── */
 
 export function ThinkingBubble() {
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const t = window.setInterval(() => {
-      setPhase((p) => (p + 1) % 3);
-    }, 3200);
-    return () => window.clearInterval(t);
-  }, []);
-
   return (
     <motion.div
       initial={{ y: 16, opacity: 0 }}

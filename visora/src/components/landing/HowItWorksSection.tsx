@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
-import { RevealSection } from "./RevealSection";
 
 interface Step {
   icon: LucideIcon;

@@ -4,8 +4,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Rocket } from "lucide-react";
 
-import { RevealSection } from "./RevealSection";
-
 /**
  * Final landing CTA — a monochrome-bordered card with a subtle animated
  * mesh background. The mesh is slow-drifting radial gradients (white/silver only).

@@ -11,7 +11,6 @@ import {
 } from "react";
 
 import type { ChatAttachment } from "@/types/visora";
-import { useVisualViewportBottomInset } from "@/hooks/useVisualViewportBottomInset";
 import { cn } from "@/lib/utils";
 
 interface ChatInputProps {
@@ -76,7 +75,6 @@ export function ChatInput({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const keyboardInset = useVisualViewportBottomInset();
 
   // Auto-grow.
   useEffect(() => {

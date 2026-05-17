@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
-import { RevealSection } from "./RevealSection";
 
 interface Problem {
   icon: LucideIcon;
