@@ -6,7 +6,7 @@
     "postinstall": "npm install --prefix visora",
     "dev": "npm run dev --prefix visora",
     "dev:debug": "npm run dev:debug --prefix visora",
-    "build": "npm run build --prefix visora",
+    "build": "npm ci --prefix visora || npm install --prefix visora && npm run build --prefix visora",
     "start": "npm run start --prefix visora",
     "lint": "npm run lint --prefix visora",
     "test:smoke": "npm run test:smoke --prefix visora"
