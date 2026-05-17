@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 
 interface Feature {
   icon: LucideIcon;
@@ -66,7 +67,7 @@ const FEATURES: Feature[] = [
 
 export function FeaturesSection() {
   return (
-    <section className="relative w-full py-24 sm:py-32">
+    <RevealSection className="relative w-full py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <SectionHeading
           title="Everything You Need to Ship"
@@ -79,9 +80,9 @@ export function FeaturesSection() {
           viewport={{ once: true, amount: 0.15 }}
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+            show: { transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
           }}
-          className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"
         >
           {FEATURES.map(({ icon: Icon, title, description }) => (
             <motion.li
@@ -91,12 +92,12 @@ export function FeaturesSection() {
                 show: { y: 0, opacity: 1 },
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               className="
                 group relative rounded-2xl p-6
                 bg-white/[0.03] backdrop-blur-xl
                 border border-white/[0.06]
-                transition-[border-color,box-shadow] duration-300
+                transition-[border-color,box-shadow,transform] duration-200
                 hover:border-brand-cyan/20 hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.35)]
               "
             >
@@ -115,7 +116,7 @@ export function FeaturesSection() {
           ))}
         </motion.ul>
       </div>
-    </section>
+    </RevealSection>
   );
 }
 

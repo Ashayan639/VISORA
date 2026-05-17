@@ -18,7 +18,7 @@ export const PRIMARY_NAV: NavLink[] = [
   { label: "Generate", href: "/generate", matchPrefix: true },
   { label: "3D Studio", href: "/studio", matchPrefix: true },
   { label: "Gallery", href: "/gallery", matchPrefix: true },
-  { label: "Technology", href: "/technology" },
+  { label: "Technology", href: "/tech" },
 ];
 
 /** Footer column: Product. */
@@ -30,7 +30,7 @@ export const FOOTER_PRODUCT: NavLink[] = [
 
 /** Footer column: Resources. */
 export const FOOTER_RESOURCES: NavLink[] = [
-  { label: "Technology", href: "/technology" },
+  { label: "Technology", href: "/tech" },
   { label: "Demo", href: "/demo" },
 ];
 

@@ -1,4 +1,5 @@
 import type { NextAuthOptions } from "next-auth";
+import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
 type Provider = NextAuthOptions["providers"][number];
@@ -7,11 +8,11 @@ type Provider = NextAuthOptions["providers"][number];
  * VISORA — NextAuth (v4) configuration.
  *
  * Behaviour:
- *   - If Google credentials are present, Google sign-in is enabled.
- *   - If they are missing OR still placeholders, we log ONE warning and
- *     ship an empty providers list. NextAuth still mounts (the routes
+ *   - Google and/or GitHub OAuth when credentials are present (non-placeholder).
+ *   - If credentials are missing OR still placeholders, we log ONE warning per
+ *     provider and omit that provider. NextAuth still mounts (the routes
  *     respond, `useSession()` returns `{ data: null }`), so the rest of
- *     the app keeps working — there's just no way to sign in.
+ *     the app keeps working when no providers are enabled.
  *   - `NEXTAUTH_SECRET` is required by NextAuth in production. We pass
  *     whatever is set; if missing, we warn but don't throw, matching the
  *     hackathon-mode contract.
@@ -19,6 +20,8 @@ type Provider = NextAuthOptions["providers"][number];
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GITHUB_ID = process.env.GITHUB_ID;
+const GITHUB_SECRET = process.env.GITHUB_SECRET;
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
 
@@ -54,7 +57,22 @@ function buildProviders(): Provider[] {
   } else {
     warnOnce(
       "google",
-      "Google OAuth credentials are missing or placeholders — sign-in is disabled. The app will continue to work without auth.",
+      "Google OAuth credentials are missing or placeholders — Google sign-in is disabled.",
+    );
+  }
+
+  const hasGitHub = !isPlaceholder(GITHUB_ID) && !isPlaceholder(GITHUB_SECRET);
+  if (hasGitHub) {
+    providers.push(
+      GitHubProvider({
+        clientId: GITHUB_ID as string,
+        clientSecret: GITHUB_SECRET as string,
+      }),
+    );
+  } else {
+    warnOnce(
+      "github",
+      "GitHub OAuth credentials are missing or placeholders — GitHub sign-in is disabled.",
     );
   }
 
@@ -107,4 +125,9 @@ export const authOptions: NextAuthOptions = {
 /** True when at least one auth provider is configured. */
 export function isAuthConfigured(): boolean {
   return authOptions.providers.length > 0;
+}
+
+/** NextAuth provider ids currently enabled (e.g. `google`, `github`). */
+export function getEnabledAuthProviderIds(): string[] {
+  return authOptions.providers.map((p) => p.id);
 }

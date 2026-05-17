@@ -61,11 +61,11 @@ export function ProjectCard({
   const has3D = Boolean(model3d?.modelUrl || model3d?.id);
   const dateLabel = formatDate(createdAt);
 
-  const href = `/gallery/${encodeURIComponent(id)}`;
+  const href = `/project/${encodeURIComponent(id)}`;
 
   return (
     <motion.article
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 320, damping: 28 }}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl",

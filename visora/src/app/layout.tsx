@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { PageTransition } from "@/components/providers/PageTransition";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -27,17 +28,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased bg-[#020617]`}
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col bg-background text-foreground font-sans"
+        className="min-h-full flex flex-col overflow-x-clip bg-[#020617] text-foreground font-sans"
         suppressHydrationWarning
       >
         <AuthProvider>
           <Navbar />
           {/* `pt-16` clears the 64px fixed navbar. */}
-          <main className="flex-1 pt-16">{children}</main>
+          <main className="flex min-h-0 flex-1 flex-col pt-16">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
         </AuthProvider>
       </body>

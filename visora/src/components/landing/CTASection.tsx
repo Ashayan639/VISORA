@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Rocket } from "lucide-react";
 
+import { RevealSection } from "./RevealSection";
+
 /**
  * Final landing CTA — a gradient-bordered card with a subtle animated
  * mesh background. The mesh is two slow-drifting radial gradients
@@ -11,7 +13,7 @@ import { ArrowRight, Rocket } from "lucide-react";
  */
 export function CTASection() {
   return (
-    <section className="relative w-full pb-32 pt-16 sm:pb-40 sm:pt-24">
+    <RevealSection className="relative w-full pb-32 pt-16 sm:pb-40 sm:pt-24">
       <div className="mx-auto max-w-5xl px-6 md:px-12">
         <motion.div
           initial={{ y: 24, opacity: 0 }}
@@ -129,7 +131,7 @@ export function CTASection() {
           </div>
         </motion.div>
       </div>
-    </section>
+    </RevealSection>
   );
 }
 

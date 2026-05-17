@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Globe, Lightbulb, type LucideIcon } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 import { cn } from "@/lib/utils";
 
 interface SolutionMode {
@@ -83,7 +84,7 @@ function ModeCard({
         "relative flex flex-col gap-6 rounded-3xl p-8 sm:p-10",
         "bg-white/[0.03] backdrop-blur-xl",
         "border border-white/[0.06]",
-        "transition-[border-color,box-shadow] duration-300",
+        "transition-[border-color,box-shadow] duration-200 hover:scale-[1.02]",
         accentClasses.hoverGlow,
       )}
     >
@@ -123,7 +124,7 @@ function ModeCard({
         className={cn(
           "group/cta mt-2 inline-flex items-center gap-2 self-start rounded-full px-5 py-2.5 text-sm font-semibold text-white",
           "bg-gradient-to-r shadow-md shadow-brand-cyan/15",
-          "transition-all duration-200 hover:scale-105",
+          "transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-brand-purple/25",
           accentClasses.ctaBg,
         )}
       >
@@ -139,7 +140,7 @@ function ModeCard({
 
 export function SolutionSection() {
   return (
-    <section className="relative w-full py-24 sm:py-32">
+    <RevealSection className="relative w-full py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <SectionHeading
           title="Two Paths to Visual Reality"
@@ -151,7 +152,7 @@ export function SolutionSection() {
           <ModeCard mode={MODES[1]} fromX={40} delay={0.1} />
         </div>
       </div>
-    </section>
+    </RevealSection>
   );
 }
 

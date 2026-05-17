@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 
 interface Step {
   icon: LucideIcon;
@@ -56,7 +57,7 @@ const STEPS: Step[] = [
  */
 export function HowItWorksSection() {
   return (
-    <section className="relative w-full py-24 sm:py-32">
+    <RevealSection className="relative w-full py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <SectionHeading title="How It Works" subtitle="Five steps from blank slate to launch-ready." />
 
@@ -67,13 +68,13 @@ export function HowItWorksSection() {
           variants={{
             hidden: {},
             show: {
-              transition: { staggerChildren: 0.18, delayChildren: 0.25 },
+              transition: { staggerChildren: 0.1, delayChildren: 0.15 },
             },
           }}
           className="relative mt-20"
         >
-          {/* Desktop: horizontal gradient line + tick marks */}
-          <div className="hidden md:block">
+          {/* Desktop: horizontal timeline (lg+) — tablet uses vertical stack */}
+          <div className="hidden lg:block">
             <div className="relative h-px w-full bg-white/[0.06]">
               <motion.div
                 variants={{
@@ -129,7 +130,7 @@ export function HowItWorksSection() {
           </div>
 
           {/* Mobile: vertical timeline */}
-          <ol className="relative md:hidden">
+          <ol className="relative lg:hidden">
             <div className="absolute left-6 top-0 h-full w-px bg-white/[0.06]" />
             <motion.div
               variants={{
@@ -178,7 +179,7 @@ export function HowItWorksSection() {
           </ol>
         </motion.div>
       </div>
-    </section>
+    </RevealSection>
   );
 }
 

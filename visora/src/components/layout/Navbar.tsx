@@ -103,7 +103,7 @@ function UserAvatar({
 
 export function Navbar() {
   const pathname = usePathname() ?? "/";
-  const { user, isAuthenticated, signIn, signOut } = useAuth();
+  const { user, isAuthenticated, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -165,9 +165,8 @@ export function Navbar() {
             {isAuthenticated && user ? (
               <UserAvatar user={user} onClick={() => signOut()} />
             ) : (
-              <button
-                type="button"
-                onClick={() => signIn()}
+              <Link
+                href="/login"
                 className="
                   rounded-full px-4 py-1.5 text-[13px] font-medium
                   border border-brand-cyan/60 text-brand-cyan
@@ -176,7 +175,7 @@ export function Navbar() {
                 "
               >
                 Login
-              </button>
+              </Link>
             )}
             <Link
               href="/generate"
@@ -286,20 +285,18 @@ export function Navbar() {
                     Sign out
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      signIn();
-                    }}
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
                     className="
                       w-full rounded-full px-4 py-2.5 text-sm font-medium
                       border border-brand-cyan/60 text-brand-cyan
+                      text-center
                       hover:bg-brand-cyan/10 transition-colors
                     "
                   >
                     Login
-                  </button>
+                  </Link>
                 )}
                 <Link
                   href="/generate"

@@ -212,7 +212,7 @@ export default function StudioPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-4rem)] min-h-0 w-full flex-1 overflow-hidden bg-background">
       {/* ── Sidebar (shared sessions) ────────────────────── */}
       <ChatSidebar
         sessions={sessions}
@@ -241,7 +241,7 @@ export default function StudioPage() {
       {/* ── Right panel — ALWAYS visible on desktop ──────── */}
       <aside
         className={cn(
-          "hidden md:flex md:w-[440px] md:shrink-0 md:flex-col",
+          "hidden lg:flex lg:w-[440px] lg:shrink-0 lg:flex-col",
           "border-l border-white/[0.06]",
         )}
         aria-label="3D viewer"
@@ -264,7 +264,7 @@ export default function StudioPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={closeMobileSheet}
-              className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm lg:hidden"
             />
             <motion.section
               key="sheet"
@@ -273,7 +273,7 @@ export default function StudioPage() {
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
               className="
-                fixed inset-x-0 bottom-0 z-50 md:hidden
+                fixed inset-x-0 bottom-0 z-50 lg:hidden
                 h-[80vh]
                 rounded-t-2xl border-t border-white/[0.06]
                 bg-card/95 backdrop-blur-xl shadow-2xl
@@ -315,7 +315,7 @@ export default function StudioPage() {
           onClick={openMobileSheet}
           aria-label="Open 3D viewer"
           className="
-            fixed bottom-24 right-4 z-30 md:hidden
+            fixed bottom-24 right-4 z-30 lg:hidden
             inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold text-white
             bg-gradient-to-r from-brand-cyan to-brand-purple
             shadow-md shadow-brand-cyan/20

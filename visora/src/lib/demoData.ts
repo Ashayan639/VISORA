@@ -1,23 +1,104 @@
 /**
- * Urban Brew Ceylon — the canonical VISORA demo project.
+ * VISORA — Demo data.
  *
- * Used by:
- *   • The chat engine when the user asks for a "demo" / "example".
- *   • Future onboarding tours / empty states.
- *   • Storybook-style fixtures during development.
+ * THREE full hackathon-quality demo brands the app can fall back on
+ * when no Supabase / fal.ai / OpenAI keys are configured:
  *
- * The visuals all reference `/placeholder-visual.png` (the dark
- * VISORA-branded fallback) so the demo works offline. Once a real
- * fal.ai run completes, callers replace `imageUrl` with the live URL.
+ *   1. Urban Brew Ceylon — premium specialty coffee in Colombo
+ *      (trust 78, no 3D yet — clicking "Generate 3D" still triggers
+ *      a live trellis call when fal.ai is configured)
+ *   2. EcoSip Lanka      — refillable water bottles for Sri Lankan
+ *      university campuses (trust 65)
+ *   3. GlowNest          — premium 4-minute morning skincare for
+ *      busy women professionals (trust 82)
  *
- * `model3d` is intentionally omitted — clicking "Generate 3D model"
- * in the demo triggers a real /api/generate-3d call so judges can see
- * the live trellis pipeline.
+ * Every demo's visuals point at the `/api/placeholder` SVG generator,
+ * so the gallery, project page, and chat demo flow render fully even
+ * with zero API keys. The URLs encode the brand name, the visual type,
+ * and the project's palette so each card looks distinctly on-brand.
+ *
+ * `model3d` is intentionally omitted on every demo — clicking
+ * "Generate 3D model" in the demo project page triggers a real
+ * /api/generate-3d call so judges can see the live trellis pipeline
+ * the moment FAL_KEY is added.
  */
 
-import type { Project } from "@/types/visora";
+import type { Project, VisualType } from "@/types/visora";
+
+/* ─────────────────────────────────────────────────────────────
+   Placeholder URL helper
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Build a `/api/placeholder?...` URL. The route renders a deterministic
+ * SVG with a palette-driven gradient + the brand name overlaid in large
+ * type — perfect for offline / zero-key demos.
+ *
+ * Returns a *relative* URL so it works on any host (localhost,
+ * Vercel preview, custom domain) without configuration.
+ */
+function ph(
+  type: VisualType,
+  brand: string,
+  title: string,
+  palette: string[],
+): string {
+  const params = new URLSearchParams({
+    type,
+    brand,
+    title,
+    palette: palette.join(","),
+  });
+  return `/api/placeholder?${params.toString()}`;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Demo 1 — Urban Brew Ceylon (premium specialty coffee, Colombo)
+   ───────────────────────────────────────────────────────────── */
 
 export const DEMO_PROJECT_ID = "demo-urban-brew-ceylon";
+export const DEMO_ECOSIP_ID = "demo-ecosip-lanka";
+export const DEMO_GLOWNEST_ID = "demo-glownest";
+
+/**
+ * Hackathon-friendly alias → canonical demo id.
+ *
+ * Lets short URLs like `/project/demo-1` resolve to the long canonical
+ * slug (`demo-urban-brew-ceylon`) so judges and shared links don't need
+ * to know the marketing name. Aliases are case-insensitive.
+ */
+const DEMO_ID_ALIASES: Readonly<Record<string, string>> = {
+  "demo-1": DEMO_PROJECT_ID,
+  "demo-2": DEMO_ECOSIP_ID,
+  "demo-3": DEMO_GLOWNEST_ID,
+  "demo-urban-brew": DEMO_PROJECT_ID,
+  "demo-ecosip": DEMO_ECOSIP_ID,
+};
+
+/**
+ * Normalises a `[id]` route param into a canonical project id:
+ *   - URL-decodes percent-escapes
+ *   - trims whitespace
+ *   - swaps known short aliases (demo-1 / demo-2 / demo-3 / ...) for
+ *     their canonical demo id
+ *
+ * Always returns a string (possibly empty) so callers can pass the
+ * result straight into a Supabase / localStorage lookup.
+ */
+export function resolveProjectIdParam(rawId: string): string {
+  const id = decodeURIComponent(rawId).trim();
+  if (!id) return "";
+  const alias = DEMO_ID_ALIASES[id.toLowerCase()];
+  return alias ?? id;
+}
+
+const URBAN_BREW_PALETTE = [
+  "#2B1B11",
+  "#5C3A21",
+  "#C9A55B",
+  "#E7DDC6",
+  "#FFF7EC",
+];
 
 export const DEMO_PROJECT: Project = {
   id: DEMO_PROJECT_ID,
@@ -46,12 +127,11 @@ export const DEMO_PROJECT: Project = {
     targetAudience:
       "Design-led office workers and creatives in Colombo who want a coffee that matches their aesthetic standards.",
     tone: "Confident, warm, and quietly opinionated.",
-    usp:
-      "Single-origin Ceylon coffee in a launch-ready, design-first brand — bag, story, and brewing ritual included.",
+    usp: "Single-origin Ceylon coffee in a launch-ready, design-first brand — bag, story, and brewing ritual included.",
     story:
       "Urban Brew Ceylon started where most coffee brands stop: at the surface. Colombo had great cafés, but no one was packaging that quality for the desk, the studio, the meeting at 9:14. We work with small estates in the Central Highlands, roast in two-day batches, and design every touchpoint as deliberately as the cup itself.",
     promise: "Considered coffee, delivered like a flagship product.",
-    colorPalette: ["#2B1B11", "#5C3A21", "#C9A55B", "#E7DDC6", "#FFF7EC"],
+    colorPalette: URBAN_BREW_PALETTE,
     painPoints: [
       "Existing premium coffee in Colombo is gatekept inside cafés, not packaged.",
       "Most local coffee brands lean nostalgic — visuals feel dated to design-led buyers.",
@@ -85,45 +165,64 @@ export const DEMO_PROJECT: Project = {
 
   visuals: [
     {
-      id: "demo-v-product",
+      id: "demo-urban-brew-v-product",
       visualType: "product_mockup",
       title: "Product mockup",
       prompt:
         "Editorial photograph of an Urban Brew Ceylon coffee bag on warm linen, brass accent, soft natural light, palette of warm browns and matte gold. No on-image text or logos.",
-      imageUrl: "/placeholder-visual.png",
+      imageUrl: ph(
+        "product_mockup",
+        "Urban Brew Ceylon",
+        "Product mockup",
+        URBAN_BREW_PALETTE,
+      ),
       status: "generated",
     },
     {
-      id: "demo-v-hero",
+      id: "demo-urban-brew-v-hero",
       visualType: "hero_image",
       title: "Hero image",
       prompt:
         "Cinematic hero image of a Colombo studio interior at dusk; a hand placing an Urban Brew Ceylon cup on a designer's desk, warm tungsten light, depth of field. No on-image text.",
-      imageUrl: "/placeholder-visual.png",
+      imageUrl: ph(
+        "hero_image",
+        "Urban Brew Ceylon",
+        "Hero · The morning ritual, redrawn.",
+        URBAN_BREW_PALETTE,
+      ),
       status: "generated",
     },
     {
-      id: "demo-v-ig",
+      id: "demo-urban-brew-v-ig",
       visualType: "instagram_ad",
       title: "Instagram ad",
       prompt:
         "Square Instagram ad for Urban Brew Ceylon, coffee bag hero off-center, generous negative space, palette of warm browns and cream, premium product photography.",
-      imageUrl: "/placeholder-visual.png",
+      imageUrl: ph(
+        "instagram_ad",
+        "Urban Brew Ceylon",
+        "Subscribe to your ritual",
+        URBAN_BREW_PALETTE,
+      ),
       status: "generated",
     },
     {
-      id: "demo-v-lifestyle",
+      id: "demo-urban-brew-v-lifestyle",
       visualType: "lifestyle_scene",
       title: "Lifestyle scene",
       prompt:
         "Candid lifestyle scene of a designer in a Colombo studio holding an Urban Brew Ceylon cup, golden-hour light, real hands, depth of field, warm palette.",
-      imageUrl: "/placeholder-visual.png",
+      imageUrl: ph(
+        "lifestyle_scene",
+        "Urban Brew Ceylon",
+        "On the desk, at 9:14",
+        URBAN_BREW_PALETTE,
+      ),
       status: "generated",
     },
   ],
 
-  // model3d is intentionally undefined — a live trellis call happens
-  // when the user clicks "Generate 3D" inside the demo flow.
+  // model3d intentionally undefined.
 
   websiteConcept: {
     heroHeadline: "The morning ritual, redrawn.",
@@ -201,260 +300,436 @@ export const DEMO_PROJECT: Project = {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   Additional demo projects.
-
-   These showcase different shapes the gallery can render: an idea-
-   based brand WITH a 3D model, a website-URL refresh, and a SaaS
-   brand without 3D. They're used by /gallery as a backstop when the
-   user has nothing saved yet, so the workspace never looks empty
-   for the demo / hackathon judges.
+   Demo 2 — EcoSip Lanka (refillable bottles for SL universities)
    ───────────────────────────────────────────────────────────── */
 
-export const DEMO_AURELIA: Project = {
-  id: "demo-aurelia-os",
-  createdAt: "2026-04-09T10:30:00.000Z",
+const ECOSIP_PALETTE = [
+  "#0F1F1A",
+  "#1F3A2E",
+  "#3FA66D",
+  "#BFE2C9",
+  "#F2F0E6",
+];
+
+export const DEMO_ECOSIP: Project = {
+  id: "demo-ecosip-lanka",
+  createdAt: "2026-04-03T09:30:00.000Z",
   inputType: "idea",
+
   userInput: {
     startupIdea:
-      "Aurelia OS — a calm, opinionated knowledge base for two-person founder teams who hate Notion sprawl.",
+      "A refillable stainless-steel water bottle for Sri Lankan university students, paired with a free refill network across campus cafeterias to make ditching single-use plastic effortless.",
     websiteUrl: "",
-    industry: "developer tools / SaaS",
+    industry: "consumer goods / sustainability",
     targetAudience:
-      "two-person founder teams (engineer + designer), 25–35, building consumer / B2B products",
-    location: "remote, primarily NA + EU",
-    brandStyle: "minimal-modern",
-    productType: "web app, SaaS",
-    visualMood: "calm-clinical",
+      "Undergraduates aged 18–25 across Sri Lankan universities (Colombo, Peradeniya, Moratuwa, Jaffna).",
+    location: "Sri Lanka — campus-led",
+    brandStyle: "eco-friendly modern",
+    productType: "reusable stainless-steel water bottle + refill network",
+    visualMood: "fresh-leafy",
     inputType: "idea",
   },
-  brandResult: {
-    brandName: "Aurelia OS",
-    tagline: "The calm operating system for two-person founder teams.",
-    mission:
-      "Replace the 47-tab knowledge mess of early-stage startups with one calm surface that two co-founders can actually keep in sync.",
-    targetAudience:
-      "Two-person founder teams who used to like Notion and have stopped trusting it.",
-    tone: "Confident, minimal, occasionally funny.",
-    usp:
-      "A two-pane workspace built for exactly two writers — never more, never less — with a real opinion about hierarchy.",
-    story:
-      "We watched a hundred founders graduate from a single Notion doc to thirty pages, then to chaos. Every team rebuilt the same sidebar. Aurelia is the sidebar — done, opinionated, beautiful.",
-    promise: "Calm, not capable.",
-    colorPalette: ["#0B0F19", "#171C2A", "#7DD3FC", "#E2E8F0", "#FAFAFA"],
-    painPoints: [
-      "Notion sprawl after the first 90 days.",
-      "Two co-founders losing track of who decided what.",
-      "Tools built for 50-person teams used by two people.",
-    ],
-  },
-  trustScore: {
-    overallScore: 84,
-    confidence: "High",
-    categories: [
-      { name: "Brand clarity", score: 92 },
-      { name: "Visual identity", score: 88 },
-      { name: "Trust signals", score: 78 },
-      { name: "Story strength", score: 90 },
-      { name: "Audience fit", score: 86 },
-      { name: "USP differentiation", score: 84 },
-      { name: "Tone consistency", score: 80 },
-      { name: "Market readiness", score: 78 },
-      { name: "Conversion potential", score: 82 },
-      { name: "Cultural relevance", score: 82 },
-    ],
-    suggestions: [
-      "Add a 30-second product loom to the hero.",
-      "Surface 3–5 founder testimonials.",
-      "Tighten the pricing page to a single table.",
-      "Show a real user's workspace screenshot above the fold.",
-      "Add an explicit 'two-person only' constraint as a feature, not a limit.",
-    ],
-  },
-  visuals: [
-    {
-      id: "demo-aurelia-product",
-      visualType: "product_mockup",
-      title: "Product mockup",
-      prompt:
-        "Editorial product photo of an Aurelia OS welcome card on a designer's desk, calm minimal palette, soft natural light.",
-      imageUrl: "/placeholder-visual.png",
-      status: "generated",
-    },
-    {
-      id: "demo-aurelia-hero",
-      visualType: "hero_image",
-      title: "Hero image",
-      prompt:
-        "Cinematic hero image of two co-founders at a calm desk setup, depth of field, palette desaturated cool.",
-      imageUrl: "/placeholder-visual.png",
-      status: "generated",
-    },
-  ],
-  model3d: {
-    id: "demo-aurelia-mesh",
-    modelType: "text_to_3d",
-    prompt: "Aurelia OS hero card object — minimal, isometric, single mesh.",
-    sourceImageUrl: "/placeholder-visual.png",
-    modelUrl:
-      "https://v3b.fal.media/files/example/aurelia-card-demo.glb",
-    status: "generated",
-  },
-  websiteConcept: {
-    heroHeadline: "The calm operating system for two-person founder teams.",
-    heroSubheadline:
-      "Replace 47 Notion tabs with one calm surface that two co-founders can actually keep in sync.",
-    cta: "Try Aurelia free",
-    sections: [
-      { title: "Why Aurelia", content: "We watched a hundred founders graduate from one Notion doc to thirty pages, then to chaos. Aurelia is the calm." },
-      { title: "Built for exactly two", content: "Two writers, two columns, two perspectives. We had a real opinion when we built it." },
-      { title: "From idea → ship", content: "A single workspace from your earliest scribble to the spec your engineer ships." },
-      { title: "Calm by default", content: "No emoji storms, no notification noise. Just one surface that respects your attention." },
-      { title: "Pricing", content: "Free for two co-founders. $19/mo when you grow." },
-    ],
-    faq: [
-      { q: "What if we hire a third teammate?", a: "Aurelia is built for two. We'll suggest a graduation path to a tool that fits a 3+ team." },
-      { q: "Does it import Notion?", a: "Yes — paste a Notion URL and we'll mirror the page tree as a calm two-pane structure." },
-    ],
-    trustSignals: ["100% calm by default", "Two-person workspace", "Notion import"],
-  },
-  marketingPack: {
-    instagramCaption:
-      "Aurelia OS — the calm operating system for two-person founder teams. Two writers. One surface. Zero sprawl.",
-    tiktokScript: [
-      "HOOK (0–2s): \"What if your knowledge base had a real opinion?\"",
-      "BEAT 1 (2–6s): Show a typical Notion sprawl, 47 tabs.",
-      "BEAT 2 (6–10s): Cut to Aurelia OS — two calm columns.",
-      "CTA (10–14s): \"Calm — link in bio.\"",
-    ].join("\n"),
-    whatsappMessage:
-      "Hey! Just spun up Aurelia OS on VISORA — calm two-person knowledge base for founder duos. Want to see?",
-    emailSubject: "Aurelia OS: a calmer Notion for two co-founders",
-    adHeadlines: [
-      "Aurelia OS — calm, not capable.",
-      "Two co-founders. One workspace. Zero sprawl.",
-      "The opinionated knowledge base for founder duos.",
-    ],
-  },
-};
 
-export const DEMO_LANEFORD: Project = {
-  id: "demo-laneford-tea-refresh",
-  createdAt: "2026-02-22T16:45:00.000Z",
-  inputType: "website_url",
-  userInput: {
-    startupIdea: "",
-    websiteUrl: "https://laneford-tea.example.com",
-    industry: "specialty tea",
-    targetAudience:
-      "30–55, design-led professionals in NYC and London who buy loose-leaf tea twice a year as gifts",
-    location: "New York, NY (HQ); ships globally",
-    brandStyle: "heritage-modern",
-    productType: "loose-leaf tea, tin",
-    visualMood: "warm-archival",
-    inputType: "website_url",
-  },
   brandResult: {
-    brandName: "Laneford Tea Co.",
-    tagline: "Old craft, new ritual.",
+    brandName: "EcoSip Lanka",
+    tagline: "Sip the change.",
     mission:
-      "Refresh a 60-year heritage tea brand for a new generation of gift-buyers without losing the archive that built it.",
+      "Make refilling so easy on Sri Lankan campuses that single-use plastic stops feeling like the default.",
     targetAudience:
-      "Design-led professionals who want a heritage tea that looks as good on a coffee table as a Hermès scarf.",
-    tone: "Considered, archival, quietly modern.",
-    usp:
-      "A 60-year tea archive packaged with the typographic discipline of a 2025 design studio.",
+      "Sri Lankan undergraduates who want to do the right thing without the eco lecture or the price tag.",
+    tone: "Cheerful, optimistic, peer-to-peer — gentle activism, not guilt.",
+    usp: "A lifetime bottle plus 60+ free refill stations across 12 partner campuses — replenishment, not just a purchase.",
     story:
-      "Laneford has been blending tea since 1965. The blends were timeless; the brand wasn't. We rebuilt the visual system without touching the recipes.",
-    promise: "Heritage you can re-gift without apologising.",
-    colorPalette: ["#1F1A14", "#3A2E22", "#C19A65", "#E9DCC4", "#F8F2E5"],
+      "EcoSip Lanka started in a Moratuwa engineering lecture: two students realised the campus bin was 80% PET. Instead of preaching, they shipped a bottle that pairs with a free refill network — a stainless-steel staple that pays for itself in three weeks of cafeteria coffee.",
+    promise: "One bottle, free refills, zero plastic.",
+    colorPalette: ECOSIP_PALETTE,
     painPoints: [
-      "Old design felt 'grandparent gift', not 'taste-led peer'.",
-      "Archive of 60 years was hidden, not surfaced.",
-      "Premium tea drinkers under 40 weren't returning.",
+      "Reusable bottles feel expensive when you're a student on Rs.500/day.",
+      "Refilling from a tap feels uncertain — students worry about water quality.",
+      "Eco brands often talk down to young buyers instead of meeting them where they are.",
     ],
   },
+
   trustScore: {
     overallScore: 65,
     confidence: "Medium",
     categories: [
       { name: "Brand clarity", score: 78 },
-      { name: "Visual identity", score: 60 },
-      { name: "Trust signals", score: 72 },
-      { name: "Story strength", score: 75 },
-      { name: "Audience fit", score: 58 },
-      { name: "USP differentiation", score: 60 },
-      { name: "Tone consistency", score: 55 },
-      { name: "Market readiness", score: 70 },
-      { name: "Conversion potential", score: 62 },
-      { name: "Cultural relevance", score: 60 },
+      { name: "Visual identity", score: 70 },
+      { name: "Trust signals", score: 60 },
+      { name: "Story strength", score: 72 },
+      { name: "Audience fit", score: 80 },
+      { name: "USP differentiation", score: 68 },
+      { name: "Tone consistency", score: 64 },
+      { name: "Market readiness", score: 55 },
+      { name: "Conversion potential", score: 60 },
+      { name: "Cultural relevance", score: 75 },
     ],
     suggestions: [
-      "Surface the 1965 archive as a visible timeline.",
-      "Re-shoot product photography on warm linen, not parchment.",
-      "Tighten typography — one display, one body, no third.",
-      "Add a 'gifted to' card on every order.",
-      "Refresh the homepage hero to a single archive photo.",
+      "Publish a map of refill stations on the homepage — turn the network into the proof.",
+      "Add a 'water-tested weekly' badge with the lab partner's logo.",
+      "Show 3 student founders' faces in the about section to build trust.",
+      "Pin a TikTok testimonial reel above the fold (students trust students).",
+      "Spell out the lifetime guarantee and the return-for-recycle promise.",
     ],
   },
+
   visuals: [
     {
-      id: "demo-laneford-product",
+      id: "demo-ecosip-v-product",
       visualType: "product_mockup",
       title: "Product mockup",
       prompt:
-        "Editorial product shot of a Laneford Tea tin on warm linen, archival typography, soft window light.",
-      imageUrl: "/placeholder-visual.png",
+        "Editorial product shot of an EcoSip Lanka stainless-steel bottle in deep forest green with a brushed-steel cap, sitting on a textbook on a sunny university bench, soft natural light. No on-image text.",
+      imageUrl: ph(
+        "product_mockup",
+        "EcoSip Lanka",
+        "Product mockup",
+        ECOSIP_PALETTE,
+      ),
       status: "generated",
     },
     {
-      id: "demo-laneford-lifestyle",
+      id: "demo-ecosip-v-hero",
+      visualType: "hero_image",
+      title: "Hero image",
+      prompt:
+        "Wide hero image of a refill station outside a Sri Lankan university cafeteria, two students chatting while filling EcoSip bottles, golden afternoon light, palette of forest greens and warm sand. No on-image text.",
+      imageUrl: ph(
+        "hero_image",
+        "EcoSip Lanka",
+        "Hero · Sip the change.",
+        ECOSIP_PALETTE,
+      ),
+      status: "generated",
+    },
+    {
+      id: "demo-ecosip-v-ig",
+      visualType: "instagram_ad",
+      title: "Instagram ad",
+      prompt:
+        "Square Instagram ad: EcoSip bottle centred on a leafy background, generous negative space, lower-third reads 'lifetime refills · 12 campuses'. Bright, peer-to-peer feel.",
+      imageUrl: ph(
+        "instagram_ad",
+        "EcoSip Lanka",
+        "Lifetime refills · 12 campuses",
+        ECOSIP_PALETTE,
+      ),
+      status: "generated",
+    },
+    {
+      id: "demo-ecosip-v-lifestyle",
       visualType: "lifestyle_scene",
       title: "Lifestyle scene",
       prompt:
-        "Lifestyle photo of a Laneford tin being unwrapped at a designer's coffee table, warm tones, depth of field.",
-      imageUrl: "/placeholder-visual.png",
+        "Candid lifestyle scene of a university student walking between lecture halls with an EcoSip bottle clipped to their backpack, late-afternoon shadows, palette of greens and sand.",
+      imageUrl: ph(
+        "lifestyle_scene",
+        "EcoSip Lanka",
+        "Between lectures",
+        ECOSIP_PALETTE,
+      ),
       status: "generated",
     },
   ],
+
   websiteConcept: {
-    heroHeadline: "Old craft, new ritual.",
+    heroHeadline: "Sip the change.",
     heroSubheadline:
-      "Sixty years of loose-leaf, packaged for the way you actually live now.",
-    cta: "Shop the archive",
+      "One refillable bottle. Free refills at 60+ campus stations. Zero plastic guilt.",
+    cta: "Find your campus",
     sections: [
-      { title: "The 1965 archive", content: "Sixty years of blends, surfaced as a visible timeline." },
-      { title: "Made in small batches", content: "Every tin is blended weekly in our New York facility." },
-      { title: "Gifted on purpose", content: "A 'gifted to' card on every order — designed for the giver and the receiver." },
+      {
+        title: "How it works",
+        content:
+          "Buy the bottle once. Refill it free at any partner station — cafeterias, libraries, sports complexes — across 12 partner universities.",
+      },
+      {
+        title: "Water you can trust",
+        content:
+          "Every refill station is filtered and tested weekly by an independent lab. The badge on the tap says when.",
+      },
+      {
+        title: "Built to last (then recycled)",
+        content:
+          "Food-grade stainless steel with a lifetime guarantee. When it's done, send it back and we'll recycle it for free.",
+      },
+      {
+        title: "Refill map",
+        content:
+          "60+ stations across Colombo, Peradeniya, Moratuwa, Kelaniya, Sri Jayewardenepura, Ruhuna, Jaffna and 5 more — visible on the homepage map.",
+      },
+      {
+        title: "Campus partners wanted",
+        content:
+          "Run a society, hostel, or campus café? Apply to host an EcoSip station — free install, free maintenance, zero cost to the campus.",
+      },
     ],
     faq: [
-      { q: "Has the recipe changed?", a: "No. We only refreshed the brand and the packaging." },
-      { q: "Where do you ship?", a: "Globally, weekly, from New York." },
+      {
+        q: "How much does the bottle cost?",
+        a: "Rs.1,890 for the 750 ml bottle with lifetime refills. About three weeks of cafeteria coffee.",
+      },
+      {
+        q: "What if I lose my bottle?",
+        a: "Bring the cap (it has your code) and we'll replace the body at half price, no questions asked.",
+      },
+      {
+        q: "Is the water actually safe?",
+        a: "Every station is filtered to WHO drinking-water standards and tested weekly. Reports are public on the site.",
+      },
     ],
-    trustSignals: ["Established 1965", "Blended weekly in NYC", "Gift-card included"],
+    trustSignals: [
+      "Lifetime guarantee",
+      "Weekly water testing",
+      "12 campus partners",
+      "60+ refill stations",
+    ],
   },
+
   marketingPack: {
     instagramCaption:
-      "Laneford Tea Co. — old craft, new ritual. Sixty years of loose-leaf, packaged for the way you actually live now.",
-    tiktokScript: "—",
+      "Meet EcoSip Lanka.\n\nSip the change.\n\nOne refillable bottle, free refills at 60+ campus stations, lifetime guarantee. Built by students, for students — no plastic, no lecture.\n\nFind your campus refill station →",
+    tiktokScript: [
+      'HOOK (0–2s): "POV: your campus bin is 80% plastic bottles."',
+      "BEAT 1 (2–6s): Quick cuts of overflowing campus bins.",
+      "BEAT 2 (6–10s): Cut to a student clipping an EcoSip bottle onto a backpack.",
+      "BEAT 3 (10–14s): Refill station tap fills the bottle — overlay '60+ stations, 12 unis'.",
+      'CTA (14–16s): "Lifetime refills. Link in bio."',
+    ].join("\n"),
     whatsappMessage:
-      "Hey — Laneford Tea Co. just refreshed with VISORA. Same 1965 recipes, very different packaging.",
-    emailSubject: "Laneford Tea Co.: refreshed, not reinvented",
+      "Hey! Just spun up EcoSip Lanka on VISORA — refillable bottle + free campus refill network for SL universities. Brand, palette, website, marketing — done. Want the link?",
+    emailSubject: "EcoSip Lanka: the bottle that pays for itself in 3 weeks",
     adHeadlines: [
-      "Old craft, new ritual.",
-      "Laneford Tea Co. — sixty years, refreshed.",
-      "The tea your grandmother kept on the top shelf.",
+      "EcoSip Lanka — one bottle, free refills, zero plastic.",
+      "Built by students, for students.",
+      "60+ refill stations. 12 campuses. Lifetime bottle.",
     ],
   },
 };
 
+/* ─────────────────────────────────────────────────────────────
+   Demo 3 — GlowNest (premium 4-minute skincare)
+   ───────────────────────────────────────────────────────────── */
+
+const GLOWNEST_PALETTE = [
+  "#1A0F12",
+  "#3A1F25",
+  "#E4A2A8",
+  "#F4D5C5",
+  "#FFF1E8",
+];
+
+export const DEMO_GLOWNEST: Project = {
+  id: "demo-glownest",
+  createdAt: "2026-03-12T17:15:00.000Z",
+  inputType: "idea",
+
+  userInput: {
+    startupIdea:
+      "A premium morning skincare line for busy women professionals — a four-step routine that takes four minutes, designed with a Korean dermatologist, packaged like a luxury fragrance.",
+    websiteUrl: "",
+    industry: "premium skincare",
+    targetAudience:
+      "Women 28–42 in design, consulting, law, and finance who want a serious skincare result without a 12-step routine.",
+    location: "metro India + UAE; ships globally",
+    brandStyle: "luxury-warm",
+    productType: "morning skincare regimen, 4 products, refillable",
+    visualMood: "soft-editorial",
+    inputType: "idea",
+  },
+
+  brandResult: {
+    brandName: "GlowNest",
+    tagline: "Four minutes to glow.",
+    mission:
+      "Give serious skincare back to the four-minute morning — luxury results without the 12-step ritual.",
+    targetAudience:
+      "Women 28–42 with a calendar that says 'partner sync at 8:30' and skin that deserves better than a single wipe.",
+    tone: "Quietly confident, premium, warm — evidence-led, never preachy.",
+    usp: "A Korean-dermatologist-designed four-step morning regimen, refillable, that fits in the time it takes to brew a coffee.",
+    story:
+      "GlowNest started with one question: why does luxury skincare assume you have an hour? Our founder, a corporate lawyer, briefed a Seoul-based dermatologist to compress a serious morning regimen into four products, four minutes, four results. Each step is timed on the bottle. The packaging is refillable.",
+    promise: "Real skin science, in the time it takes to brew coffee.",
+    colorPalette: GLOWNEST_PALETTE,
+    painPoints: [
+      "Most luxury skincare ranges assume an unrealistic 10–12 step morning routine.",
+      "Working professionals over-pay for products they don't have time to use correctly.",
+      "Refill culture barely exists in the premium skincare aisle.",
+    ],
+  },
+
+  trustScore: {
+    overallScore: 82,
+    confidence: "High",
+    categories: [
+      { name: "Brand clarity", score: 90 },
+      { name: "Visual identity", score: 88 },
+      { name: "Trust signals", score: 80 },
+      { name: "Story strength", score: 84 },
+      { name: "Audience fit", score: 86 },
+      { name: "USP differentiation", score: 85 },
+      { name: "Tone consistency", score: 82 },
+      { name: "Market readiness", score: 76 },
+      { name: "Conversion potential", score: 80 },
+      { name: "Cultural relevance", score: 78 },
+    ],
+    suggestions: [
+      "Surface the dermatologist's credentials and a short founder note on the homepage.",
+      "Add before / after grids on the product page (4-week, 8-week).",
+      "Publish a refill subscription with a one-tap pause option.",
+      "Add a 60-second 'four-minute morning' loom to the hero.",
+      "Push a refill-bottle return programme (earn credits, not guilt).",
+    ],
+  },
+
+  visuals: [
+    {
+      id: "demo-glownest-v-product",
+      visualType: "product_mockup",
+      title: "Product mockup",
+      prompt:
+        "Editorial photograph of the GlowNest four-step morning kit lined up on a marble countertop, blush and cream tones, refillable glass bottles, soft directional light. No on-image text.",
+      imageUrl: ph(
+        "product_mockup",
+        "GlowNest",
+        "Product mockup",
+        GLOWNEST_PALETTE,
+      ),
+      status: "generated",
+    },
+    {
+      id: "demo-glownest-v-hero",
+      visualType: "hero_image",
+      title: "Hero image",
+      prompt:
+        "Wide hero image: a woman in her mid-30s at a sunlit bathroom mirror, mid-routine with a GlowNest serum, palette of blush, cream, and warm gold. Cinematic, calm, premium.",
+      imageUrl: ph(
+        "hero_image",
+        "GlowNest",
+        "Hero · Four minutes to glow.",
+        GLOWNEST_PALETTE,
+      ),
+      status: "generated",
+    },
+    {
+      id: "demo-glownest-v-ig",
+      visualType: "instagram_ad",
+      title: "Instagram ad",
+      prompt:
+        "Square Instagram ad: GlowNest serum bottle centred against a blush satin backdrop, gold accents, generous negative space, premium product photography.",
+      imageUrl: ph(
+        "instagram_ad",
+        "GlowNest",
+        "4 steps · 4 minutes · serious skin",
+        GLOWNEST_PALETTE,
+      ),
+      status: "generated",
+    },
+    {
+      id: "demo-glownest-v-lifestyle",
+      visualType: "lifestyle_scene",
+      title: "Lifestyle scene",
+      prompt:
+        "Candid lifestyle scene of a woman packing the GlowNest travel kit into a leather work tote, golden-hour kitchen light, palette of blush and cream. Real hands, depth of field.",
+      imageUrl: ph(
+        "lifestyle_scene",
+        "GlowNest",
+        "Mornings in the bag",
+        GLOWNEST_PALETTE,
+      ),
+      status: "generated",
+    },
+  ],
+
+  websiteConcept: {
+    heroHeadline: "Four minutes to glow.",
+    heroSubheadline:
+      "A Korean-dermatologist-designed four-step morning routine for women who run their day, not their bathroom.",
+    cta: "Start the 4-step routine",
+    sections: [
+      {
+        title: "The four steps",
+        content:
+          "Cleanse · Treat · Hydrate · Defend. Each bottle is timed (60 seconds on the label). The whole routine is four minutes — set a timer if you must.",
+      },
+      {
+        title: "Backed by a Seoul dermatologist",
+        content:
+          "We briefed a Seoul-based dermatologist (15 years, K-beauty labs) to compress a serious regimen into four products. Every formula is clinical-grade and patch-tested.",
+      },
+      {
+        title: "Refillable, on purpose",
+        content:
+          "The outer bottles are made once. After that, you refill — at home with subscription pouches, or in-store at our two flagship counters in Mumbai and Dubai.",
+      },
+      {
+        title: "Real receipts",
+        content:
+          "8-week before / after panels with 60 women. Average glow-score lift: +28%. (Yes, glow-score is a thing — we publish the methodology.)",
+      },
+      {
+        title: "Subscribe & pause",
+        content:
+          "Get refills every 8 weeks, on auto. Pause with one tap from your phone. Cancel anytime — no email gauntlet.",
+      },
+    ],
+    faq: [
+      {
+        q: "Is this really only four minutes?",
+        a: "Yes — each bottle is timed at 60 seconds. The whole routine, including the wait between steps, is four minutes flat.",
+      },
+      {
+        q: "Where are the products made?",
+        a: "Formulated in Seoul, filled in Mumbai (premium contract manufacturer, ISO 22716 certified).",
+      },
+      {
+        q: "How does refilling work?",
+        a: "Order refill pouches via the subscription, or drop in to a flagship counter. Pouches use 78% less plastic than a fresh bottle.",
+      },
+    ],
+    trustSignals: [
+      "Korean dermatologist-designed",
+      "ISO 22716 manufacturing",
+      "Refillable + subscription",
+      "8-week clinical panels",
+    ],
+  },
+
+  marketingPack: {
+    instagramCaption:
+      "Meet GlowNest.\n\nFour minutes to glow.\n\nA Korean-dermatologist-designed four-step morning routine for women who run their day, not their bathroom. Each bottle is timed. The packaging refills.\n\nStart the 4-step routine →",
+    tiktokScript: [
+      'HOOK (0–2s): "Your skincare routine should not be longer than your stand-up."',
+      "BEAT 1 (2–6s): Show a chaotic morning montage — meetings, kid, kettle.",
+      "BEAT 2 (6–10s): Cut to the four GlowNest bottles, each with a 60s timer.",
+      'BEAT 3 (10–14s): Founder VO: "Four steps. Four minutes. Designed in Seoul, made in Mumbai."',
+      'CTA (14–16s): "Link in bio — start the routine."',
+    ].join("\n"),
+    whatsappMessage:
+      "Hey! Just spun up GlowNest on VISORA — premium 4-step morning skincare for women who don't have an hour. Brand, palette, visuals, website, marketing — all done. Want the link?",
+    emailSubject: "GlowNest: serious skincare in the time it takes to brew coffee",
+    adHeadlines: [
+      "GlowNest — four minutes to glow.",
+      "Real skin science. Designed for the 8:30 meeting.",
+      "The four-step morning, refillable, dermatologist-designed.",
+    ],
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────
+   Aggregate — the default demo gallery
+   ───────────────────────────────────────────────────────────── */
+
 /**
  * Default demo gallery — used by /gallery as a backstop when both
- * Supabase and localStorage are empty. Order from newest to oldest.
+ * Supabase and localStorage are empty so judges and first-time users
+ * always see a populated, explorable workspace. Order newest first.
  */
 export const DEMO_PROJECTS: Project[] = [
-  DEMO_PROJECT,    // Urban Brew Ceylon — premium coffee, 78 trust
-  DEMO_AURELIA,    // Aurelia OS — calm SaaS, 84 trust, has 3D
-  DEMO_LANEFORD,   // Laneford Tea Co. — URL refresh, 65 trust, no 3D
+  DEMO_PROJECT, // Urban Brew Ceylon — trust 78
+  DEMO_ECOSIP, // EcoSip Lanka       — trust 65
+  DEMO_GLOWNEST, // GlowNest          — trust 82
 ];
 
 export default DEMO_PROJECT;

@@ -53,7 +53,7 @@ const SUGGESTIONS: Suggestion[] = [
   {
     kind: "send",
     icon: Play,
-    title: "Show me a demo",
+    title: "Try Demo",
     prompt: "Show me a demo with Urban Brew Ceylon",
   },
 ];
@@ -109,7 +109,7 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
         animate="show"
         variants={{
           hidden: {},
-          show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+          show: { transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
         }}
         className="flex w-full max-w-3xl flex-col items-center gap-8 text-center"
       >
@@ -150,9 +150,9 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
         <motion.div
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+            show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
           }}
-          className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2"
+          className="grid w-full grid-cols-1 gap-3 md:grid-cols-2"
         >
           {SUGGESTIONS.map((s) => (
             <motion.div
@@ -162,7 +162,7 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
                 show: { y: 0, opacity: 1 },
               }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -2, scale: 1.02 }}
             >
               {s.kind === "navigate" ? (
                 <Link
@@ -172,7 +172,7 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
                     "group relative flex items-start gap-3 rounded-2xl p-4 text-left",
                     "bg-white/[0.03] backdrop-blur-xl",
                     "border border-white/[0.06]",
-                    "transition-[border-color,box-shadow] duration-200",
+                    "transition-[border-color,box-shadow,transform] duration-200",
                     "hover:border-brand-cyan/25 hover:shadow-[0_0_30px_-12px_rgba(56,189,248,0.5)]",
                   )}
                 >
@@ -187,7 +187,7 @@ export function EmptyState({ onPickSuggestion }: EmptyStateProps) {
                     "group relative flex w-full items-start gap-3 rounded-2xl p-4 text-left",
                     "bg-white/[0.03] backdrop-blur-xl",
                     "border border-white/[0.06]",
-                    "transition-[border-color,box-shadow] duration-200",
+                    "transition-[border-color,box-shadow,transform] duration-200",
                     "hover:border-brand-cyan/25 hover:shadow-[0_0_30px_-12px_rgba(56,189,248,0.5)]",
                   )}
                 >

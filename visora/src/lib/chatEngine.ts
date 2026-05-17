@@ -251,14 +251,29 @@ function makeId(): string {
   return `m-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
 }
 
-function makeAssistantMessage(content: string, widgets: Widget[] = []): ChatMessage {
+function makeAssistantMessage(
+  content: string,
+  widgets: Widget[] = [],
+  meta?: ChatMessage["meta"],
+): ChatMessage {
   return {
     id: makeId(),
     role: "assistant",
     content,
     timestamp: new Date().toISOString(),
     widgets,
+    ...(meta ? { meta } : {}),
   };
+}
+
+/**
+ * Convenience wrapper for the demo flow — stamps every assistant
+ * message with `meta.isDemo: true` so the chat UI can render a
+ * "Demo Mode" badge and judges always know when they're looking at
+ * canned demo content rather than a live model round-trip.
+ */
+function makeDemoMessage(content: string, widgets: Widget[] = []): ChatMessage {
+  return makeAssistantMessage(content, widgets, { isDemo: true });
 }
 
 async function delay(ms: number): Promise<void> {
@@ -474,21 +489,21 @@ async function handleDemo(ctx: HandlerCtx): Promise<ChatMessage[]> {
   ctx.patch(DEMO_PROJECT);
 
   push(
-    makeAssistantMessage(
-      "Sure — here's our hero demo, **Urban Brew Ceylon**: a premium small-batch coffee brand for design-led offices in Colombo. Walking you through what we generated.",
+    makeDemoMessage(
+      "Sure — here's our hero demo, **Urban Brew Ceylon**: a premium small-batch coffee brand for design-led offices in Colombo. Walking you through what we generated — no API keys required.",
     ),
   );
   await delay(DEMO_PACE_MS);
 
   push(
-    makeAssistantMessage("Brand brain — name, tagline, story, palette:", [
+    makeDemoMessage("Brand brain — name, tagline, story, palette:", [
       { type: "brand_card", data: DEMO_PROJECT.brandResult },
     ]),
   );
   await delay(DEMO_PACE_MS);
 
   push(
-    makeAssistantMessage(
+    makeDemoMessage(
       `Trust audit — ${DEMO_PROJECT.trustScore.overallScore}/100 across ${DEMO_PROJECT.trustScore.categories.length} categories:`,
       [{ type: "trust_score", data: DEMO_PROJECT.trustScore }],
     ),
@@ -496,28 +511,28 @@ async function handleDemo(ctx: HandlerCtx): Promise<ChatMessage[]> {
   await delay(DEMO_PACE_MS);
 
   push(
-    makeAssistantMessage("Four launch-ready visuals from fal.ai:", [
+    makeDemoMessage("Four launch-ready visuals (rendered locally for the demo):", [
       { type: "image_grid", data: { assets: DEMO_PROJECT.visuals } },
     ]),
   );
   await delay(DEMO_PACE_MS);
 
   push(
-    makeAssistantMessage("Here's the website concept:", [
+    makeDemoMessage("Here's the website concept:", [
       { type: "website_preview", data: DEMO_PROJECT.websiteConcept },
     ]),
   );
   await delay(DEMO_PACE_MS);
 
   push(
-    makeAssistantMessage("And the marketing pack — IG, TikTok, WhatsApp, email, ads:", [
+    makeDemoMessage("And the marketing pack — IG, TikTok, WhatsApp, email, ads:", [
       { type: "marketing_pack", data: DEMO_PROJECT.marketingPack },
     ]),
   );
   await delay(DEMO_PACE_MS);
 
   push(
-    makeAssistantMessage(
+    makeDemoMessage(
       "Want me to spin up a real 3D model from the product mockup? Or save this demo as a starting point?",
       [postBrandActions()],
     ),

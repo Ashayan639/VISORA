@@ -96,7 +96,7 @@ export default function GeneratePage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-4rem)] min-h-0 w-full flex-1 overflow-hidden bg-background">
       <ChatSidebar
         sessions={sessions}
         activeSessionId={sessionId}

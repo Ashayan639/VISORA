@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import type {
   BrandResult,
   MarketingPack,
@@ -43,48 +44,63 @@ export function WidgetRenderer({
 }: WidgetRendererProps) {
   const open = onOpen ? () => onOpen(widget) : undefined;
 
-  switch (widget.type as WidgetType) {
-    case "brand_card":
-      return <BrandCard data={widget.data as BrandResult} onOpen={open} />;
+  const inner = (() => {
+    switch (widget.type as WidgetType) {
+      case "brand_card":
+        return <BrandCard data={widget.data as BrandResult} onOpen={open} />;
 
-    case "trust_score":
-      return (
-        <TrustScoreWidget data={widget.data as TrustScore} onImprove={open} />
-      );
+      case "trust_score":
+        return (
+          <TrustScoreWidget data={widget.data as TrustScore} onImprove={open} />
+        );
 
-    case "image_grid": {
-      const { assets = [] } = widget.data as { assets?: VisualAsset[] };
-      return (
-        <ImageGrid
-          assets={assets}
-          onOpenAll={open}
-          onOpenAsset={onOpen ? () => onOpen(widget) : undefined}
-        />
-      );
+      case "image_grid": {
+        const { assets = [] } = widget.data as { assets?: VisualAsset[] };
+        return (
+          <ImageGrid
+            assets={assets}
+            onOpenAll={open}
+            onOpenAsset={onOpen ? () => onOpen(widget) : undefined}
+          />
+        );
+      }
+
+      case "model_3d":
+        return <Model3DPreview data={widget.data as Model3D} onOpen={open} />;
+
+      case "website_preview":
+        return (
+          <WebsitePreviewWidget data={widget.data as WebsiteConcept} onOpen={open} />
+        );
+
+      case "marketing_pack":
+        return <MarketingPackWidget data={widget.data as MarketingPack} />;
+
+      case "action_buttons":
+        return (
+          <ActionButtons
+            data={widget.data as ActionButtonsData}
+            onAction={onAction}
+          />
+        );
+
+      default:
+        return null;
     }
+  })();
 
-    case "model_3d":
-      return <Model3DPreview data={widget.data as Model3D} onOpen={open} />;
+  if (!inner) return null;
 
-    case "website_preview":
-      return (
-        <WebsitePreviewWidget data={widget.data as WebsiteConcept} onOpen={open} />
-      );
-
-    case "marketing_pack":
-      return <MarketingPackWidget data={widget.data as MarketingPack} />;
-
-    case "action_buttons":
-      return (
-        <ActionButtons
-          data={widget.data as ActionButtonsData}
-          onAction={onAction}
-        />
-      );
-
-    default:
-      return null;
-  }
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+      className="min-w-0"
+    >
+      {inner}
+    </motion.div>
+  );
 }
 
 export default WidgetRenderer;

@@ -211,7 +211,7 @@ function Hero() {
                   bg-gradient-to-r from-brand-cyan to-brand-purple
                   shadow-lg shadow-brand-cyan/20
                   transition-all duration-200
-                  hover:scale-105 hover:shadow-xl hover:shadow-brand-purple/40
+                  hover:scale-105 hover:shadow-xl hover:shadow-brand-purple/45
                 "
               >
                 Start Building Reality
@@ -222,8 +222,8 @@ function Hero() {
                   inline-flex items-center justify-center
                   rounded-full px-6 py-3 text-sm font-semibold
                   border border-brand-cyan/40 text-muted
-                  transition-colors duration-200
-                  hover:bg-brand-cyan/5 hover:text-foreground hover:border-brand-cyan
+                  transition-all duration-200
+                  hover:scale-105 hover:bg-brand-cyan/5 hover:text-foreground hover:border-brand-cyan
                 "
               >
                 Watch Demo

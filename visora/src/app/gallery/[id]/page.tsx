@@ -11,7 +11,7 @@ import { MarketingPackWidget } from "@/components/chat/widgets/MarketingPackWidg
 import { Model3DPreview } from "@/components/chat/widgets/Model3DPreview";
 import { TrustScoreWidget } from "@/components/chat/widgets/TrustScoreWidget";
 import { WebsitePreviewWidget } from "@/components/chat/widgets/WebsitePreviewWidget";
-import { DEMO_PROJECTS } from "@/lib/demoData";
+import { DEMO_PROJECTS, resolveProjectIdParam } from "@/lib/demoData";
 import { getLocalProjects } from "@/lib/galleryStorage";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/visora";
@@ -36,7 +36,8 @@ interface DetailPageProps {
 type LoadStatus = "loading" | "ready" | "missing";
 
 export default function GalleryDetailPage({ params }: DetailPageProps) {
-  const { id } = use(params);
+  const { id: rawId } = use(params);
+  const id = resolveProjectIdParam(rawId);
   const [project, setProject] = useState<Project | null>(null);
   const [status, setStatus] = useState<LoadStatus>("loading");
 

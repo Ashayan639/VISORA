@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import type { ChatAttachment } from "@/types/visora";
+import { useVisualViewportBottomInset } from "@/hooks/useVisualViewportBottomInset";
 import { cn } from "@/lib/utils";
 
 interface ChatInputProps {
@@ -75,6 +76,7 @@ export function ChatInput({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const keyboardInset = useVisualViewportBottomInset();
 
   // Auto-grow.
   useEffect(() => {
@@ -147,7 +149,12 @@ export function ChatInput({
   }, []);
 
   return (
-    <div className="w-full px-4 pb-4 sm:px-6 sm:pb-6">
+    <div
+      className="w-full px-4 sm:px-6"
+      style={{
+        paddingBottom: `max(1rem, calc(env(safe-area-inset-bottom, 0px) + ${Math.max(12, keyboardInset + 12)}px))`,
+      }}
+    >
       {/* Attachment / error chip row */}
       {(attachment || uploadError) && (
         <div className="mx-auto mb-2 flex w-full max-w-3xl flex-wrap items-center gap-2">
@@ -241,10 +248,10 @@ export function ChatInput({
           rows={1}
           aria-label="Message VISORA"
           className="
-            flex-1 resize-none bg-transparent
-            px-2 py-1.5 text-[15px] leading-relaxed text-foreground
+            flex-1 resize-none rounded-lg bg-white/[0.04] px-2 py-1.5 text-[15px] leading-relaxed
+            text-foreground ring-1 ring-white/[0.08]
             placeholder:text-hint
-            focus:outline-none
+            focus:outline-none focus:ring-brand-cyan/35
           "
           style={{ maxHeight: MAX_TEXTAREA_PX }}
           disabled={disabled}
@@ -261,7 +268,7 @@ export function ChatInput({
             "shadow-md shadow-brand-cyan/20",
             "transition-all duration-200",
             canSend
-              ? "hover:scale-105 hover:shadow-lg hover:shadow-brand-purple/40"
+              ? "hover:scale-105 hover:shadow-lg hover:shadow-brand-purple/45"
               : "opacity-40 cursor-not-allowed shadow-none",
           )}
         >

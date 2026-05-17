@@ -65,7 +65,7 @@ export function ChatArea({
   const showEmpty = messages.length === 0 && !isGenerating;
 
   return (
-    <section className="flex min-w-0 flex-1 flex-col">
+    <section className="flex min-h-0 min-w-0 flex-1 flex-col">
       {/* Top bar */}
       <header className="flex h-12 items-center gap-2 border-b border-white/[0.06] bg-background/40 backdrop-blur-xl px-3 sm:px-4">
         <button
@@ -75,7 +75,7 @@ export function ChatArea({
           className="
             inline-flex h-8 w-8 items-center justify-center rounded-md
             text-muted transition-colors hover:text-foreground hover:bg-white/[0.04]
-            md:hidden
+            lg:hidden
           "
         >
           <Menu size={16} />
