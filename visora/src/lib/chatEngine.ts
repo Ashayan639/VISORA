@@ -265,14 +265,29 @@ function makeId(): string {
   return `m-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
 }
 
-function makeAssistantMessage(content: string, widgets: Widget[] = []): ChatMessage {
+function makeAssistantMessage(
+  content: string,
+  widgets: Widget[] = [],
+  meta?: ChatMessage["meta"],
+): ChatMessage {
   return {
     id: makeId(),
     role: "assistant",
     content,
     timestamp: new Date().toISOString(),
     widgets,
+    ...(meta ? { meta } : {}),
   };
+}
+
+/**
+ * Convenience wrapper for the demo flow — stamps every assistant
+ * message with `meta.isDemo: true` so the chat UI can render a
+ * "Demo Mode" badge and judges always know when they're looking at
+ * canned demo content rather than a live model round-trip.
+ */
+function makeDemoMessage(content: string, widgets: Widget[] = []): ChatMessage {
+  return makeAssistantMessage(content, widgets, { isDemo: true });
 }
 
 async function delay(ms: number): Promise<void> {

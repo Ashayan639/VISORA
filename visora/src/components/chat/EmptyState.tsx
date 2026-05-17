@@ -118,7 +118,7 @@ export function EmptyState({ onPickSuggestion, onTryDemo }: EmptyStateProps) {
         animate="show"
         variants={{
           hidden: {},
-          show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+          show: { transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
         }}
         className="flex w-full max-w-3xl flex-col items-center gap-8 text-center"
       >
@@ -159,9 +159,9 @@ export function EmptyState({ onPickSuggestion, onTryDemo }: EmptyStateProps) {
         <motion.div
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+            show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
           }}
-          className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2"
+          className="grid w-full grid-cols-1 gap-3 md:grid-cols-2"
         >
           {SUGGESTIONS.map((s) => (
             <motion.div
@@ -171,7 +171,7 @@ export function EmptyState({ onPickSuggestion, onTryDemo }: EmptyStateProps) {
                 show: { y: 0, opacity: 1 },
               }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -2, scale: 1.02 }}
             >
               {s.kind === "navigate" ? (
                 <Link

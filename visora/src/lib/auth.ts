@@ -135,3 +135,8 @@ export function mapAuthUser(user: User | null) {
       null,
   };
 }
+
+/** NextAuth provider ids currently enabled (e.g. `google`, `github`). */
+export function getEnabledAuthProviderIds(): string[] {
+  return authOptions.providers.map((p) => p.id);
+}

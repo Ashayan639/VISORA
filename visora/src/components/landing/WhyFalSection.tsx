@@ -11,13 +11,13 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 import { cn } from "@/lib/utils";
 
 interface VisualCard {
   icon: LucideIcon;
   title: string;
   description: string;
-  /** Highlights the card as the special 3D model tile. */
   emphasis?: boolean;
 }
 
@@ -50,13 +50,7 @@ const CARDS: VisualCard[] = [
   },
 ];
 
-function VisualTile({
-  card,
-  delay,
-}: {
-  card: VisualCard;
-  delay: number;
-}) {
+function VisualTileInner({ card }: { card: VisualCard }) {
   const { icon: Icon, title, description, emphasis } = card;
   return (
     <motion.div
@@ -99,7 +93,7 @@ function VisualTile({
           </span>
         ) : null}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -133,11 +127,31 @@ export function WhyFalSection() {
           </span>
         </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          {CARDS.map((card, i) => (
-            <VisualTile key={card.title} card={card} delay={i * 0.08} />
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.12 }}
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: 0.1, delayChildren: 0.06 } },
+          }}
+          className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-5"
+        >
+          {CARDS.map((card) => (
+            <motion.div
+              key={card.title}
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                show: { y: 0, opacity: 1 },
+              }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              whileHover={{ scale: 1.02 }}
+              className="duration-200 will-change-transform"
+            >
+              <VisualTileInner card={card} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <motion.p
           initial={{ y: 16, opacity: 0 }}

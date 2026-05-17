@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 
 interface Feature {
   icon: LucideIcon;
@@ -85,9 +86,9 @@ export function FeaturesSection() {
           viewport={{ once: true, amount: 0.15 }}
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+            show: { transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
           }}
-          className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"
         >
           {FEATURES.map(({ icon: Icon, title, description }) => (
             <motion.li
@@ -97,7 +98,7 @@ export function FeaturesSection() {
                 show: { y: 0, opacity: 1 },
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               className="
                 group relative rounded-2xl p-6
                 bg-card border border-[#4F5052]/30

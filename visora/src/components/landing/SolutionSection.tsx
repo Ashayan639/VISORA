@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Globe, Lightbulb, type LucideIcon } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 import { cn } from "@/lib/utils";
 
 interface SolutionMode {

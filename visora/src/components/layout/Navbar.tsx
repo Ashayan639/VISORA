@@ -176,7 +176,7 @@ export function Navbar() {
                 "
               >
                 Login
-              </button>
+              </Link>
             )}
             <Link
               href="/generate"
@@ -299,7 +299,7 @@ export function Navbar() {
                     "
                   >
                     Login
-                  </button>
+                  </Link>
                 )}
                 <Link
                   href="/generate"

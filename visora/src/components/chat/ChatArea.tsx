@@ -124,7 +124,7 @@ export function ChatArea({
           className="
             inline-flex h-8 w-8 items-center justify-center rounded-md
             text-muted transition-colors hover:text-foreground hover:bg-white/[0.04]
-            md:hidden
+            lg:hidden
           "
         >
           <Menu size={16} />

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 
 interface Step {
   icon: LucideIcon;
@@ -65,7 +66,7 @@ export function HowItWorksSection() {
           variants={{
             hidden: {},
             show: {
-              transition: { staggerChildren: 0.18, delayChildren: 0.25 },
+              transition: { staggerChildren: 0.1, delayChildren: 0.15 },
             },
           }}
           className="relative mt-20"

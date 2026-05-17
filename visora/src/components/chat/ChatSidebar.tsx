@@ -277,7 +277,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={onMobileClose}
-              className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm lg:hidden"
             />
             <motion.aside
               key="drawer"
@@ -286,7 +286,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
               exit={{ x: -280 }}
               transition={{ type: "spring", stiffness: 340, damping: 32 }}
               className="
-                fixed inset-y-0 left-0 z-50 w-[280px] md:hidden
+                fixed inset-y-0 left-0 z-50 w-[280px] lg:hidden
                 bg-card/95 backdrop-blur-xl
                 border-r border-[#4F5052]/30
                 shadow-2xl

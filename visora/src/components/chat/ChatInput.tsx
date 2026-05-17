@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import type { ChatAttachment } from "@/types/visora";
+import { useVisualViewportBottomInset } from "@/hooks/useVisualViewportBottomInset";
 import { cn } from "@/lib/utils";
 
 interface ChatInputProps {
@@ -75,6 +76,7 @@ export function ChatInput({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const keyboardInset = useVisualViewportBottomInset();
 
   // Auto-grow.
   useEffect(() => {
@@ -241,10 +243,10 @@ export function ChatInput({
           rows={1}
           aria-label="Message VISORA"
           className="
-            flex-1 resize-none bg-transparent
-            px-2 py-1.5 text-[15px] leading-relaxed text-foreground
+            flex-1 resize-none rounded-lg bg-white/[0.04] px-2 py-1.5 text-[15px] leading-relaxed
+            text-foreground ring-1 ring-white/[0.08]
             placeholder:text-hint
-            focus:outline-none
+            focus:outline-none focus:ring-brand-cyan/35
           "
           style={{ maxHeight: MAX_TEXTAREA_PX }}
           disabled={disabled}

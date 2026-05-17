@@ -245,7 +245,7 @@ export default function GalleryPage() {
             <ul
               className={cn(
                 "grid list-none gap-6 p-0",
-                "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+                "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
               )}
             >
               <AnimatePresence mode="popLayout" initial={false}>
@@ -390,7 +390,7 @@ function SearchBox({ value, onChange }: SearchBoxProps) {
 
 function SkeletonGrid() {
   return (
-    <ul className="grid grid-cols-1 list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-1 list-none gap-6 p-0 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <li
           key={i}

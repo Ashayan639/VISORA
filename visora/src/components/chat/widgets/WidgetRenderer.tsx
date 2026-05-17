@@ -120,6 +120,7 @@ export function WidgetRenderer({
         />,
       );
     }
+  })();
 
     case "model_3d":
       return wrap(<Model3DPreview data={widget.data as Model3D} onOpen={open} />);

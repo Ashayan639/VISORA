@@ -185,6 +185,22 @@ export interface ChatMessage {
   timestamp: string;
   attachments?: ChatAttachment[];
   widgets?: Widget[];
+  /**
+   * Out-of-band hints for the renderer. Designed to be additive so the
+   * field survives JSON round-trips via `localStorage` without schema
+   * migrations.
+   *
+   * Currently used keys:
+   *   - `isDemo` : message was emitted by the chat engine's demo flow.
+   *                Renderers (e.g. MessageBubble) use this to badge the
+   *                bubble with a "Demo Mode" pill so judges know the
+   *                content is canned and not from a live OpenAI / fal.ai
+   *                round trip.
+   */
+  meta?: {
+    isDemo?: boolean;
+    [key: string]: unknown;
+  };
 }
 
 // ─────────────────────────────────────────────────────────────

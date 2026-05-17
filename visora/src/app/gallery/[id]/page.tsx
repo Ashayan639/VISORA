@@ -36,7 +36,8 @@ interface DetailPageProps {
 type LoadStatus = "loading" | "ready" | "missing";
 
 export default function GalleryDetailPage({ params }: DetailPageProps) {
-  const { id } = use(params);
+  const { id: rawId } = use(params);
+  const id = resolveProjectIdParam(rawId);
   const [project, setProject] = useState<Project | null>(null);
   const [status, setStatus] = useState<LoadStatus>("loading");
 

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "./SectionHeading";
+import { RevealSection } from "./RevealSection";
 
 interface Problem {
   icon: LucideIcon;
@@ -79,9 +80,9 @@ export function ProblemSection() {
           viewport={{ once: true, amount: 0.15 }}
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
+            show: { transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
           }}
-          className="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
           {PROBLEMS.map(({ icon: Icon, title, description }) => (
             <motion.li

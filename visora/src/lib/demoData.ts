@@ -71,6 +71,48 @@ export function isDemoProjectId(id: string): boolean {
    ───────────────────────────────────────────────────────────── */
 
 export const DEMO_PROJECT_ID = "demo-urban-brew-ceylon";
+export const DEMO_ECOSIP_ID = "demo-ecosip-lanka";
+export const DEMO_GLOWNEST_ID = "demo-glownest";
+
+/**
+ * Hackathon-friendly alias → canonical demo id.
+ *
+ * Lets short URLs like `/project/demo-1` resolve to the long canonical
+ * slug (`demo-urban-brew-ceylon`) so judges and shared links don't need
+ * to know the marketing name. Aliases are case-insensitive.
+ */
+const DEMO_ID_ALIASES: Readonly<Record<string, string>> = {
+  "demo-1": DEMO_PROJECT_ID,
+  "demo-2": DEMO_ECOSIP_ID,
+  "demo-3": DEMO_GLOWNEST_ID,
+  "demo-urban-brew": DEMO_PROJECT_ID,
+  "demo-ecosip": DEMO_ECOSIP_ID,
+};
+
+/**
+ * Normalises a `[id]` route param into a canonical project id:
+ *   - URL-decodes percent-escapes
+ *   - trims whitespace
+ *   - swaps known short aliases (demo-1 / demo-2 / demo-3 / ...) for
+ *     their canonical demo id
+ *
+ * Always returns a string (possibly empty) so callers can pass the
+ * result straight into a Supabase / localStorage lookup.
+ */
+export function resolveProjectIdParam(rawId: string): string {
+  const id = decodeURIComponent(rawId).trim();
+  if (!id) return "";
+  const alias = DEMO_ID_ALIASES[id.toLowerCase()];
+  return alias ?? id;
+}
+
+const URBAN_BREW_PALETTE = [
+  "#2B1B11",
+  "#5C3A21",
+  "#C9A55B",
+  "#E7DDC6",
+  "#FFF7EC",
+];
 
 export const DEMO_URBAN_BREW: Project = {
   id: DEMO_PROJECT_ID,
@@ -97,12 +139,11 @@ export const DEMO_URBAN_BREW: Project = {
     targetAudience:
       "Young professionals in Colombo who want premium coffee without the café queue.",
     tone: "Confident, warm, and quietly opinionated.",
-    usp:
-      "Single-origin Ceylon coffee in a launch-ready, design-first brand — bag, story, and brewing ritual included.",
+    usp: "Single-origin Ceylon coffee in a launch-ready, design-first brand — bag, story, and brewing ritual included.",
     story:
       "Urban Brew Ceylon started where most coffee brands stop: at the surface. Colombo had great cafés, but no one was packaging that quality for the desk, the studio, the meeting at 9:14.",
     promise: "Considered coffee, delivered like a flagship product.",
-    colorPalette: ["#2B1B11", "#5C3A21", "#C9A55B", "#E7DDC6", "#FFF7EC"],
+    colorPalette: URBAN_BREW_PALETTE,
     painPoints: [
       "Premium coffee in Colombo is gatekept inside cafés, not packaged for desks.",
       "Most local brands lean nostalgic — visuals feel dated to design-led buyers.",
@@ -258,6 +299,7 @@ export const DEMO_ECOSIP: Project = {
       "Refill culture exists but isn't branded or visible.",
     ],
   },
+
   trustScore: {
     overallScore: 65,
     confidence: "Medium",
@@ -280,6 +322,7 @@ export const DEMO_ECOSIP: Project = {
       "Offer a student ID discount at checkout.",
     ],
   },
+
   visuals: [
     demoVisual(
       "demo-es-product",
@@ -310,6 +353,7 @@ export const DEMO_ECOSIP: Project = {
       "Students at an outdoor lecture refill EcoSip bottles at a branded station, candid, sunny.",
     ),
   ],
+
   websiteConcept: {
     heroHeadline: "Sip smarter. Waste less.",
     heroSubheadline:
@@ -348,6 +392,7 @@ export const DEMO_ECOSIP: Project = {
       "Student discount",
     ],
   },
+
   marketingPack: {
     instagramCaption:
       "EcoSip Lanka is here.\n\nSip smarter. Waste less.\n\nReusable bottles + free campus refills. Link in bio for student pricing.",
