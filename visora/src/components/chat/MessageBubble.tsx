@@ -56,6 +56,29 @@ function buildMessageSegments(content: string, widgets: Widget[]): MessageSegmen
 const TEXT_CLASS =
   "text-[15px] leading-relaxed text-[#F8FAFA]/90 whitespace-pre-wrap break-words";
 
+function StreamingDots() {
+  return (
+    <div
+      className="flex items-center gap-1.5 rounded-2xl border border-[#4F5052]/30 bg-[#282728] px-4 py-3"
+      aria-label="Generating"
+    >
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          animate={{ y: [0, -5, 0], opacity: [0.35, 1, 0.35] }}
+          transition={{
+            duration: 0.55,
+            repeat: Infinity,
+            delay: i * 0.12,
+            ease: "easeInOut",
+          }}
+          className="h-2 w-2 rounded-full bg-[#4F5052]"
+        />
+      ))}
+    </div>
+  );
+}
+
 function StreamingText({ text }: { text: string }) {
   const tokens = useMemo(() => text.match(/\S+|\s+/g) ?? [], [text]);
 
@@ -220,7 +243,11 @@ export function MessageBubble({
         className="flex min-w-0 flex-1 flex-col gap-3"
       >
         {isStreaming ? (
-          message.content ? <StreamingText text={message.content} /> : null
+          message.content.trim() ? (
+            <StreamingText text={message.content} />
+          ) : (
+            <StreamingDots />
+          )
         ) : segments.length > 0 ? (
           segments.map((segment, i) => {
             if (segment.kind === "text") {
@@ -273,24 +300,7 @@ export function ThinkingBubble() {
       className="flex w-full gap-3"
     >
       <VisoraAvatar />
-      <motion.div
-        className="flex items-center gap-1.5 rounded-2xl border border-[#4F5052]/30 bg-[#282728] px-4 py-3"
-        aria-label="Generating"
-      >
-        {[0, 1, 2].map((i) => (
-          <motion.span
-            key={i}
-            animate={{ y: [0, -5, 0], opacity: [0.35, 1, 0.35] }}
-            transition={{
-              duration: 0.55,
-              repeat: Infinity,
-              delay: i * 0.12,
-              ease: "easeInOut",
-            }}
-            className="h-2 w-2 rounded-full bg-[#4F5052]"
-          />
-        ))}
-      </motion.div>
+      <StreamingDots />
     </motion.div>
   );
 }

@@ -523,7 +523,14 @@ export function useChat(options?: UseChatOptions): UseChatResult {
 
       let fullText = "";
       let assistantPlaced = false;
-      const contentType = res.headers.get("content-type") ?? "";
+      const mime =
+        res.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() ?? "";
+
+      /** Treat as JSON payload only when the body is structured — not chunked text/plain SSE-style. */
+      const jsonMode =
+        mime === "application/json" ||
+        mime === "application/problem+json" ||
+        mime.endsWith("+json");
 
       const ensureAssistantMessage = () => {
         if (assistantPlaced) return;
@@ -565,20 +572,22 @@ export function useChat(options?: UseChatOptions): UseChatResult {
         );
       };
 
-      if (contentType.includes("application/json")) {
+      if (jsonMode) {
         const data = (await res.json()) as { content?: string };
         fullText = data.content ?? "";
         ensureAssistantMessage();
       } else if (res.body) {
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
+        /** Placeholder bubble before first bytes so ThinkingBubble + empty assistant row aren't fighting briefly. */
+        ensureAssistantMessage();
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           fullText += decoder.decode(value, { stream: true });
-          ensureAssistantMessage();
           applyStreamChunk();
         }
+        fullText += decoder.decode();
       } else {
         fullText = await res.text();
         ensureAssistantMessage();
@@ -603,12 +612,17 @@ export function useChat(options?: UseChatOptions): UseChatResult {
         }
       }
 
+      const emptySurface =
+        !parsed.text.trim() && versioned.length === 0 && parsed.visualPrompts.length === 0;
+
       setMessages((prev) => {
         const next = prev.map((m) =>
           m.id === assistantId
             ? {
                 ...m,
-                content: parsed.text,
+                content: emptySurface
+                  ? "The model returned no text — check OPENAI_API_KEY and try again."
+                  : parsed.text.trim() || parsed.text,
                 widgets: versioned.length > 0 ? versioned : undefined,
               }
             : m,
@@ -618,7 +632,12 @@ export function useChat(options?: UseChatOptions): UseChatResult {
       });
 
       if (parsed.visualPrompts.length > 0) {
-        await runVisualGeneration(parsed.visualPrompts, { userMessage });
+        const widgetOnlyAssistant =
+          !parsed.text.trim() && versioned.length === 0;
+        await runVisualGeneration(parsed.visualPrompts, {
+          userMessage,
+          attachToMessageId: widgetOnlyAssistant ? assistantId : undefined,
+        });
       } else if (is3DIntent(userMessage) && projectRef.current.brandResult) {
         await run3DGeneration();
       }

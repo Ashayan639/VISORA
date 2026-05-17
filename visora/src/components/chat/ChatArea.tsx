@@ -105,13 +105,16 @@ export function ChatArea({
 
   const showEmpty = messages.length === 0 && !isGenerating;
   const lastMsg = messages[messages.length - 1];
+  /** While the newest row is already an assistant bubble, stream UX lives in MessageBubble — avoid double indicators. */
+  const streamingAssistantId =
+    isGenerating && lastMsg?.role === "assistant" ? lastMsg.id : null;
   const showThinking =
     isGenerating &&
+    !streamingAssistantId &&
     (!lastMsg ||
       lastMsg.role !== "assistant" ||
       (!lastMsg.content && !(lastMsg.widgets?.length ?? 0)));
-  const streamingMessageId =
-    isGenerating && lastMsg?.role === "assistant" ? lastMsg.id : null;
+  const streamingMessageId = streamingAssistantId;
 
   return (
     <section className="flex min-h-0 min-w-0 flex-1 flex-col">

@@ -24,6 +24,6 @@ Or `cd visora` and run `npm install` / `npm run dev` there. App URL: [http://loc
 
 **Option B — root directory `.` (repo root):**
 
-Use this if the Vercel project is already wired to the monorepo root. [`vercel.json`](vercel.json) installs dependencies in `visora/`, runs `npm run build --prefix visora`, then [`scripts/prepare-vercel-output.mjs`](scripts/prepare-vercel-output.mjs) mirrors `.next` / `public` to the repo root on Vercel (`VERCEL=1`).
+Use this if the Vercel project is already wired to the monorepo root. Set **Root Directory** to `.` (empty / repository root). The root [`package.json`](package.json) lists `next` (same version as [`visora/package.json`](visora/package.json)) so Vercel can detect Next.js before the app install runs; [`vercel.json`](vercel.json) installs `visora/` then runs `npm run build --prefix visora`, and [`scripts/prepare-vercel-output.mjs`](scripts/prepare-vercel-output.mjs) mirrors `.next` / `public` to the repo root on Vercel (`VERCEL=1`).
 
 Vercel’s **Hobby** tier includes generous free hosting for personal/small projects; billing is only if you add paid addons or exceed free limits.
